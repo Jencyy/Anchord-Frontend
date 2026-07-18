@@ -53,10 +53,7 @@ const Login = () => {
         
         {/* Top Branding */}
         <div className="relative z-10 p-12 w-full max-w-2xl mx-auto flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center shadow-lg">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-primary"><path d="M12 22V8"/><path d="M5 12H2a10 10 0 0 0 20 0h-3"/><circle cx="12" cy="5" r="3"/></svg>
-          </div>
-          <span className="text-2xl font-bold text-white tracking-tight">Anchord</span>
+          <img src="/Anchord-logo.png" alt="Anchord Logo" className="h-16 object-contain brightness-0 invert" />
         </div>
 
         {/* Center/Bottom Attractive Line & Social Proof */}

@@ -12,6 +12,7 @@ const ForgotPassword = () => {
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [cooldown, setCooldown] = useState(0);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -22,6 +23,19 @@ const ForgotPassword = () => {
     try {
       const res = await axios.post('http://localhost:5000/api/auth/forgot-password', { email });
       setMessage(res.data.msg);
+      
+      // Start 60 second cooldown
+      setCooldown(60);
+      const timer = setInterval(() => {
+        setCooldown((prev) => {
+          if (prev <= 1) {
+            clearInterval(timer);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+
     } catch (err) {
       setError(err.response?.data?.msg || 'Something went wrong');
     }
@@ -104,13 +118,15 @@ const ForgotPassword = () => {
               <Button 
                 type="submit" 
                 className="w-full h-12 text-base font-semibold rounded-lg shadow-sm hover:shadow-md transition-all active:scale-[0.99]" 
-                disabled={loading}
+                disabled={loading || cooldown > 0}
               >
                 {loading ? (
                   <div className="flex items-center gap-2">
                     <div className="h-5 w-5 rounded-full border-2 border-white/20 border-t-white animate-spin"></div>
                     Sending...
                   </div>
+                ) : cooldown > 0 ? (
+                  `Resend in ${cooldown}s`
                 ) : 'Send Reset Link'}
               </Button>
             </div>

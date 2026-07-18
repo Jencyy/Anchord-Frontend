@@ -37,9 +37,8 @@ const ResetPassword = () => {
       }, 3000);
     } catch (err) {
       setError(err.response?.data?.msg || 'Something went wrong');
+      setLoading(false);
     }
-    
-    setLoading(false);
   };
 
   return (

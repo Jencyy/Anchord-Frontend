@@ -1,9 +1,17 @@
+/**
+ * AddHabit Page
+ * -----------------------------------------------------------
+ * Allows users to create a new habit and attach it to an existing Anchor.
+ * Uses an AI gap finder to suggest the best time block based on schedule gaps.
+ * -----------------------------------------------------------
+ */
 import { useState, useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import AuthContext from '../context/AuthContext';
 
-// Simple SVGs
+// Simple SVGs used for UI icons
+
 const SparklesIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z" /><path d="M20 3v4" /><path d="M22 5h-4" /><path d="M4 17v2" /><path d="M5 18H3" /></svg>
 );
@@ -21,6 +29,10 @@ const suggestedHabits = [
   "Reduce phone scrolling"
 ];
 
+/**
+ * AddHabit Component
+ * Main component for the Add Habit flow.
+ */
 const AddHabit = () => {
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
@@ -76,6 +88,11 @@ const AddHabit = () => {
     fetchAnchors();
   }, []);
 
+  /**
+   * handleNext
+   * Proceeds to the 'gap_finder' step and triggers the AI suggestion API.
+   * Fetches anchor recommendations based on the user's selected habit details.
+   */
   const handleNext = async () => {
     setStep('gap_finder');
     // Trigger AI suggestion
@@ -117,6 +134,12 @@ const AddHabit = () => {
     }
   };
 
+  /**
+   * handleSelectAnchor
+   * Toggles the selection of a specific anchor ID.
+   * Also checks if the selection causes a conflict (i.e. >= 2 habits on the anchor).
+   * @param {string} anchorId - The ID of the anchor to toggle
+   */
   const handleSelectAnchor = (anchorId) => {
     let newSelection;
     if (selectedAnchorIds.includes(anchorId)) {
@@ -136,6 +159,11 @@ const AddHabit = () => {
     setConflictWarning(hasConflict);
   };
 
+  /**
+   * handleSave
+   * Saves the newly created habit(s) to the backend database.
+   * Redirects the user to the dashboard upon success.
+   */
   const handleSave = async () => {
     if (selectedAnchorIds.length === 0) return;
     setIsSaving(true);

@@ -1,3 +1,10 @@
+/**
+ * AuthContext
+ * -----------------------------------------------------------
+ * Provides global authentication state (user data, loading status) 
+ * and methods (login, register, logout) to the entire React application.
+ * -----------------------------------------------------------
+ */
 import { createContext, useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
@@ -10,17 +17,24 @@ export const AuthProvider = ({ children }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Check if token exists on load
+    // Check if token exists on load (e.g. when user refreshes the page)
     const token = localStorage.getItem('token');
     const storedUser = localStorage.getItem('user');
     
     if (token && storedUser) {
+      // If token and user exist in local storage, restore the session
       setUser(JSON.parse(storedUser));
+      // Set the default axios header so subsequent requests are authenticated
       axios.defaults.headers.common['x-auth-token'] = token;
     }
+    // Done checking
     setLoading(false);
   }, []);
 
+  /**
+   * registerUser
+   * Sends user data to backend to create an account, then logs them in.
+   */
   const registerUser = async (userData) => {
     try {
       const res = await axios.post('http://localhost:5000/api/auth/register', userData);
@@ -36,6 +50,10 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  /**
+   * loginUser
+   * Authenticates user credentials with backend and sets up the session.
+   */
   const loginUser = async (credentials) => {
     try {
       const res = await axios.post('http://localhost:5000/api/auth/login', credentials);
@@ -51,6 +69,11 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  /**
+   * logout
+   * Clears the user session from local storage, removes the axios auth header,
+   * resets state, and redirects to the login page.
+   */
   const logout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
@@ -59,8 +82,17 @@ export const AuthProvider = ({ children }) => {
     navigate('/login');
   };
 
+  /**
+   * updateUserSession
+   * Updates the user object in state and local storage after a profile update.
+   */
+  const updateUserSession = (updatedUser) => {
+    setUser(updatedUser);
+    localStorage.setItem('user', JSON.stringify(updatedUser));
+  };
+
   return (
-    <AuthContext.Provider value={{ user, loading, registerUser, loginUser, logout }}>
+    <AuthContext.Provider value={{ user, loading, registerUser, loginUser, logout, updateUserSession }}>
       {children}
     </AuthContext.Provider>
   );

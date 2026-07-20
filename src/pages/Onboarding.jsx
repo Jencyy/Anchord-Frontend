@@ -7,17 +7,25 @@
  */
 
 import { useState, useContext, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import axios from 'axios';
 import AuthContext from '../context/AuthContext';
 import ScheduleBuilder from '../components/ScheduleBuilder';
 
+/**
+ * Onboarding Component
+ * Renders the onboarding flow for new users to set up their initial schedule.
+ * Provides options for AI natural language parsing or manual schedule building.
+ */
 const Onboarding = () => {
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
 
-  // 'choice' | 'ai_input' | 'builder'
-  const [step, setStep] = useState('choice');
+  const [searchParams] = useSearchParams();
+  const isEditing = searchParams.get('edit') === 'true';
+
+  const [step, setStep] = useState(isEditing ? 'builder' : 'choice');
+  const [isLoadingExisting, setIsLoadingExisting] = useState(isEditing);
   
   // AI Parsing State
   const [aiText, setAiText] = useState('');
@@ -27,7 +35,7 @@ const Onboarding = () => {
   // Data passed from AI to the builder
   const [prefilledBlocks, setPrefilledBlocks] = useState([]);
 
-  // Check if they already have anchors on mount (just in case they navigated here manually)
+  // Check if they already have anchors on mount
   useEffect(() => {
     const checkAnchors = async () => {
       try {
@@ -35,16 +43,29 @@ const Onboarding = () => {
         const res = await axios.get('http://localhost:5000/api/anchors', {
           headers: { 'x-auth-token': token },
         });
-        if (res.data.length > 0) {
-          navigate('/'); // Already has schedule, go to dashboard
+        
+        if (isEditing) {
+          // Pass the existing anchors to the builder and jump straight to it
+          setPrefilledBlocks(res.data);
+          setStep('builder');
+        } else if (res.data.length > 0) {
+          // If not editing and anchors exist, go to dashboard
+          navigate('/');
         }
       } catch (err) {
         console.error('Failed to check anchors', err);
+      } finally {
+        if (isEditing) setIsLoadingExisting(false);
       }
     };
     checkAnchors();
-  }, [navigate]);
+  }, [navigate, isEditing]);
 
+  /**
+   * handleAiParse
+   * Sends the user's natural language input to the backend AI parser.
+   * If successful, moves the user to the builder step with prefilled blocks.
+   */
   const handleAiParse = async () => {
     if (!aiText.trim()) {
       setParseError('Please describe your day first.');
@@ -74,9 +95,23 @@ const Onboarding = () => {
     }
   };
 
+  /**
+   * handleComplete
+   * Callback fired when the ScheduleBuilder finishes saving anchors.
+   * Redirects the user to the main dashboard.
+   */
   const handleComplete = () => {
     navigate('/'); // Go to dashboard once saved
   };
+
+  if (isLoadingExisting) {
+    return (
+      <div className="min-h-screen bg-background flex flex-col items-center justify-center gap-4">
+        <div className="h-8 w-8 rounded-full border-4 border-muted border-t-primary animate-spin" />
+        <p className="text-muted-foreground font-medium">Loading your schedule...</p>
+      </div>
+    );
+  }
 
   if (step === 'builder') {
     return (

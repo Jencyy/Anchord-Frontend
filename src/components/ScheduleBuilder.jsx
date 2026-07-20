@@ -68,7 +68,12 @@ const SparklesIcon = ({ size = 16, className = '' }) => (
   </svg>
 );
 
-const ScheduleBuilder = ({ onComplete, userLifeStage, existingAnchors = [], onSwitchToAI }) => {
+/**
+ * ScheduleBuilder Component
+ * Renders the form for managing and creating schedule anchors.
+ * Can be pre-populated with AI suggestions or used manually.
+ */
+const ScheduleBuilder = ({ onComplete, userLifeStage, existingAnchors = [], onSwitchToAI, isEmbedded = false }) => {
   const [activeTab, setActiveTab] = useState('weekday');
   const [blocks, setBlocks] = useState(existingAnchors);
   
@@ -83,6 +88,10 @@ const ScheduleBuilder = ({ onComplete, userLifeStage, existingAnchors = [], onSw
   const tabBlocks = blocks.filter(b => b.day_type === activeTab);
   const suggestions = SUGGESTIONS[userLifeStage] || SUGGESTIONS['Mixed'];
 
+  /**
+   * handleSuggestionClick
+   * Populates the block creation form with data from a clicked suggestion pill.
+   */
   const handleSuggestionClick = (sug) => {
     setFormLabel(sug.label);
     setFormStart(sug.start);
@@ -90,6 +99,10 @@ const ScheduleBuilder = ({ onComplete, userLifeStage, existingAnchors = [], onSw
     setFormError('');
   };
 
+  /**
+   * handleAddBlock
+   * Validates the form and adds a new 'local' block to the temporary state.
+   */
   const handleAddBlock = (e) => {
     e.preventDefault();
     setFormError('');
@@ -117,10 +130,31 @@ const ScheduleBuilder = ({ onComplete, userLifeStage, existingAnchors = [], onSw
     setFormStart(formEnd);
   };
 
-  const handleRemoveBlock = (id) => {
+  /**
+   * handleRemoveBlock
+   * Removes a local block from the temporary state array.
+   * If it's a saved block, it also makes an API call to delete it from the backend.
+   */
+  const handleRemoveBlock = async (id, isNew) => {
+    if (!isNew) {
+      if (!window.confirm("Are you sure you want to delete this block? This may affect habits attached to it.")) return;
+      try {
+        const token = localStorage.getItem('token');
+        await axios.delete(`http://localhost:5000/api/anchors/${id}`, { headers: { 'x-auth-token': token } });
+      } catch (err) {
+        console.error('Failed to delete anchor', err);
+        alert('Could not delete block from database.');
+        return;
+      }
+    }
     setBlocks(prev => prev.filter(b => b._id !== id));
   };
 
+  /**
+   * handleSave
+   * Iterates through all newly added blocks and sends POST requests to the backend to save them.
+   * Calls onComplete when finished.
+   */
   const handleSave = async () => {
     const newBlocks = blocks.filter(b => b.isNew);
     if (newBlocks.length === 0) {
@@ -155,26 +189,28 @@ const ScheduleBuilder = ({ onComplete, userLifeStage, existingAnchors = [], onSw
   const newBlockCount = blocks.filter(b => b.isNew).length;
 
   return (
-    <div className="min-h-screen bg-background py-10 px-4 font-sans">
-      <div className="max-w-3xl mx-auto mb-10 text-center animate-in fade-in slide-in-from-bottom-4 duration-700">
-        <div className="inline-flex items-center justify-center gap-2 bg-surface border border-border text-primary text-xs font-bold px-4 py-1.5 rounded-full mb-6 shadow-sm">
-          <div className="h-2 w-2 rounded-full bg-secondary animate-pulse" />
-          Step 1 of 3 — Map Your Routine
+    <div className={isEmbedded ? "flex-1 flex flex-col w-full min-h-0" : "max-w-3xl mx-auto animate-in fade-in slide-in-from-bottom-6 duration-700 delay-100 min-h-screen py-10 px-4"}>
+      {!isEmbedded && (
+        <div className="max-w-3xl mx-auto mb-10 text-center animate-in fade-in slide-in-from-bottom-4 duration-700">
+          <div className="inline-flex items-center justify-center gap-2 bg-surface border border-border text-primary text-xs font-bold px-4 py-1.5 rounded-full mb-6 shadow-sm">
+            <div className="h-2 w-2 rounded-full bg-secondary animate-pulse" />
+            Step 1 of 3 — Map Your Routine
+          </div>
+          <h1 className="text-4xl lg:text-5xl font-extrabold tracking-tight text-foreground mb-4">
+            Structure your day.
+          </h1>
+          <p className="text-lg text-muted-foreground max-w-xl mx-auto leading-relaxed">
+            Add the fixed blocks in your day. We'll use the gaps between them to suggest the best time for your habits.
+          </p>
         </div>
-        <h1 className="text-4xl lg:text-5xl font-extrabold tracking-tight text-foreground mb-4">
-          Structure your day.
-        </h1>
-        <p className="text-lg text-muted-foreground max-w-xl mx-auto leading-relaxed">
-          Add the fixed blocks in your day. We'll use the gaps between them to suggest the best time for your habits.
-        </p>
-      </div>
+      )}
 
-      <div className="max-w-3xl mx-auto animate-in fade-in slide-in-from-bottom-6 duration-700 delay-100">
-        <div className="bg-surface rounded-2xl shadow-sm border border-border overflow-hidden">
+      <div className={isEmbedded ? "flex-1 flex flex-col min-h-0 w-full" : "max-w-3xl mx-auto animate-in fade-in slide-in-from-bottom-6 duration-700 delay-100"}>
+        <div className={`flex flex-col flex-1 min-h-0 ${!isEmbedded ? 'bg-surface rounded-2xl shadow-sm border border-border overflow-hidden' : 'w-full'}`}>
           
           {/* Tab Switcher */}
-          <div className="p-4 bg-background border-b border-border">
-            <div className="flex bg-surface border border-border p-1.5 rounded-xl gap-1">
+          <div className="p-4 bg-background border-b border-border shrink-0">
+            <div className={`flex bg-surface border border-border p-1.5 rounded-xl gap-1 ${isEmbedded ? 'max-w-sm' : ''}`}>
               {[
                 { key: 'weekday', label: 'Weekday', sub: 'Mon – Fri' },
                 { key: 'day_off', label: 'Day Off', sub: 'Weekend / Holiday' },
@@ -183,23 +219,23 @@ const ScheduleBuilder = ({ onComplete, userLifeStage, existingAnchors = [], onSw
                   key={tab.key}
                   type="button"
                   onClick={() => setActiveTab(tab.key)}
-                  className={`flex-1 py-3 px-4 rounded-lg text-sm font-bold transition-all duration-200 flex flex-col items-center gap-1 ${
+                  className={`flex-1 py-2 px-4 rounded-lg text-sm font-bold transition-all duration-200 flex flex-col items-center gap-0.5 ${
                     activeTab === tab.key
                       ? 'bg-primary text-primary-foreground shadow-sm'
                       : 'text-muted-foreground hover:text-foreground hover:bg-background'
                   }`}
                 >
                   <span>{tab.label}</span>
-                  <span className={`text-xs font-medium ${activeTab === tab.key ? 'text-primary-foreground/80' : 'text-muted-foreground/70'}`}>{tab.sub}</span>
+                  <span className={`text-[10px] font-medium ${activeTab === tab.key ? 'text-primary-foreground/80' : 'text-muted-foreground/70'}`}>{tab.sub}</span>
                 </button>
               ))}
             </div>
           </div>
 
-          <div className="p-6 md:p-8 lg:p-10 flex flex-col lg:flex-row gap-10">
+          <div className="flex-1 flex flex-col lg:flex-row overflow-hidden min-h-0">
             
-            {/* Left side: Blocks List */}
-            <div className="flex-1">
+            {/* Left side: Blocks List (Scrollable independently) */}
+            <div className={`flex-1 overflow-y-auto ${isEmbedded ? 'p-8 bg-background/50 border-r border-border' : 'p-6 md:p-8 lg:p-10'}`}>
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-base font-bold text-foreground">
                   {activeTab === 'weekday' ? 'Weekday' : 'Day Off'} Schedule
@@ -226,7 +262,6 @@ const ScheduleBuilder = ({ onComplete, userLifeStage, existingAnchors = [], onSw
                       onClick={onSwitchToAI}
                       className="mt-2 px-4 py-2 bg-primary/10 hover:bg-primary/20 text-primary font-bold text-sm rounded-lg transition-colors flex items-center gap-2"
                     >
-                      {/* <SparklesIcon size={16} /> */}
                       Auto-fill with AI
                     </button>
                   )}
@@ -246,20 +281,19 @@ const ScheduleBuilder = ({ onComplete, userLifeStage, existingAnchors = [], onSw
                         </div>
                       </div>
                       <div className="flex items-center justify-end">
-                        {b.isNew ? (
-                          <button
-                            type="button"
-                            onClick={() => handleRemoveBlock(b._id)}
-                            className="p-2 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
-                            title="Remove block"
-                          >
-                            <TrashIcon size={16} />
-                          </button>
-                        ) : (
-                          <span className="text-xs font-bold text-secondary bg-secondary/10 px-3 py-1 rounded-full">
+                        {!b.isNew && (
+                          <span className="text-[10px] font-bold text-secondary bg-secondary/10 px-2 py-0.5 rounded-md mr-3 uppercase tracking-wider">
                             Saved
                           </span>
                         )}
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveBlock(b._id, b.isNew)}
+                          className="p-2 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
+                          title="Remove block"
+                        >
+                          <TrashIcon size={16} />
+                        </button>
                       </div>
                     </div>
                   ))}
@@ -267,9 +301,9 @@ const ScheduleBuilder = ({ onComplete, userLifeStage, existingAnchors = [], onSw
               )}
             </div>
 
-            {/* Right side: Add Form */}
-            <div className="flex-1 lg:max-w-sm">
-              <div className="bg-background rounded-xl p-6 border border-border">
+            {/* Right side: Add Form (Fixed in dashboard, static in onboarding) */}
+            <div className={`w-full lg:w-[400px] xl:w-[450px] shrink-0 overflow-y-auto ${isEmbedded ? 'bg-surface' : 'p-6 md:p-8 lg:p-10'}`}>
+              <div className={`${isEmbedded ? 'p-8' : 'bg-background rounded-xl p-6 border border-border'}`}>
                 <h3 className="text-base font-bold text-foreground mb-6">Add New Block</h3>
                 
                 {/* Suggestions */}
@@ -283,7 +317,7 @@ const ScheduleBuilder = ({ onComplete, userLifeStage, existingAnchors = [], onSw
                         key={i}
                         type="button"
                         onClick={() => handleSuggestionClick(sug)}
-                        className="text-xs font-medium bg-surface text-foreground border border-border hover:border-primary/50 hover:bg-primary/5 px-3 py-1.5 rounded-lg transition-all text-left flex items-center gap-1.5"
+                        className="text-xs font-medium bg-background text-foreground border border-border hover:border-primary/50 hover:bg-primary/5 px-3 py-1.5 rounded-lg transition-all text-left flex items-center gap-1.5 shadow-sm"
                       >
                         <PlusIcon size={12} className="text-primary" />
                         {sug.label}
@@ -300,7 +334,7 @@ const ScheduleBuilder = ({ onComplete, userLifeStage, existingAnchors = [], onSw
                       value={formLabel}
                       onChange={e => setFormLabel(e.target.value)}
                       placeholder="e.g. Deep Work"
-                      className="w-full h-11 px-3 bg-surface border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                      className="w-full h-11 px-3 bg-background border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
                     />
                   </div>
 
@@ -311,7 +345,7 @@ const ScheduleBuilder = ({ onComplete, userLifeStage, existingAnchors = [], onSw
                         type="time"
                         value={formStart}
                         onChange={e => setFormStart(e.target.value)}
-                        className="w-full h-11 px-3 bg-surface border border-border rounded-lg text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                        className="w-full h-11 px-3 bg-background border border-border rounded-lg text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
                       />
                     </div>
                     <div className="space-y-2">
@@ -320,7 +354,7 @@ const ScheduleBuilder = ({ onComplete, userLifeStage, existingAnchors = [], onSw
                         type="time"
                         value={formEnd}
                         onChange={e => setFormEnd(e.target.value)}
-                        className="w-full h-11 px-3 bg-surface border border-border rounded-lg text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                        className="w-full h-11 px-3 bg-background border border-border rounded-lg text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
                       />
                     </div>
                   </div>
@@ -333,7 +367,7 @@ const ScheduleBuilder = ({ onComplete, userLifeStage, existingAnchors = [], onSw
 
                   <button
                     type="submit"
-                    className="w-full h-11 flex items-center justify-center gap-2 rounded-lg bg-foreground hover:bg-foreground/90 text-background font-semibold text-sm transition-all"
+                    className="w-full h-11 flex items-center justify-center gap-2 rounded-lg bg-foreground hover:bg-foreground/90 text-background font-semibold text-sm transition-all shadow-sm"
                   >
                     <PlusIcon size={16} />
                     Add Block
@@ -345,7 +379,7 @@ const ScheduleBuilder = ({ onComplete, userLifeStage, existingAnchors = [], onSw
           </div>
 
           {/* Footer Save */}
-          <div className="px-6 py-5 md:px-8 bg-background border-t border-border flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="px-6 py-4 md:px-8 bg-surface border-t border-border flex flex-col sm:flex-row items-center justify-between gap-4 shrink-0">
             <div className="text-sm font-medium text-muted-foreground text-center sm:text-left">
               {saveError && <p className="text-destructive mb-1 font-semibold">{saveError}</p>}
               {newBlockCount === 0 
@@ -357,7 +391,7 @@ const ScheduleBuilder = ({ onComplete, userLifeStage, existingAnchors = [], onSw
               type="button"
               onClick={handleSave}
               disabled={isSaving || newBlockCount === 0}
-              className={`w-full sm:w-auto flex items-center justify-center gap-2 px-6 h-12 rounded-lg font-semibold text-base transition-all
+              className={`w-full sm:w-auto flex items-center justify-center gap-2 px-6 h-11 rounded-lg font-semibold text-sm transition-all
                 ${isSaving || newBlockCount === 0
                   ? 'bg-muted text-muted-foreground cursor-not-allowed'
                   : 'bg-primary hover:bg-primary-hover text-primary-foreground shadow-sm hover:shadow active:scale-[0.98]'

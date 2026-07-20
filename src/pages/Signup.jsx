@@ -1,3 +1,9 @@
+/**
+ * Signup Page
+ * -----------------------------------------------------------
+ * Allows new users to create an account on Anchord.
+ * -----------------------------------------------------------
+ */
 import { useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
 
@@ -9,6 +15,10 @@ import { Label } from '@/components/ui/label';
 // Global Authentication Context
 import AuthContext from '../context/AuthContext';
 
+/**
+ * Signup Component
+ * Renders the registration form and handles the register API request.
+ */
 const Signup = () => {
   const { registerUser } = useContext(AuthContext);
 
@@ -22,10 +32,18 @@ const Signup = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
+  /**
+   * handleChange
+   * Updates form state on input change.
+   */
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  /**
+   * handleSubmit
+   * Handles form submission by attempting to register the user via AuthContext.
+   */
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');

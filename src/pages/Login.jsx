@@ -1,3 +1,9 @@
+/**
+ * Login Page
+ * -----------------------------------------------------------
+ * Allows existing users to authenticate and access their account.
+ * -----------------------------------------------------------
+ */
 import { useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
 
@@ -9,6 +15,10 @@ import { Label } from '@/components/ui/label';
 // Global Authentication Context
 import AuthContext from '../context/AuthContext';
 
+/**
+ * Login Component
+ * Renders the login form and handles the login API request.
+ */
 const Login = () => {
   const { loginUser } = useContext(AuthContext);
 
@@ -20,10 +30,18 @@ const Login = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
+  /**
+   * handleChange
+   * Updates form state on input change.
+   */
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  /**
+   * handleSubmit
+   * Handles form submission by attempting to log the user in via AuthContext.
+   */
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');

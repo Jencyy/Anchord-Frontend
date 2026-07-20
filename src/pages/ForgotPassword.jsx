@@ -7,6 +7,17 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
+/**
+ * ForgotPassword Page
+ * -----------------------------------------------------------
+ * Allows users to request a password reset email if they forgot their password.
+ * -----------------------------------------------------------
+ */
+
+/**
+ * ForgotPassword Component
+ * Renders the form to request a password reset link.
+ */
 const ForgotPassword = () => {
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
@@ -14,6 +25,11 @@ const ForgotPassword = () => {
   const [loading, setLoading] = useState(false);
   const [cooldown, setCooldown] = useState(0);
 
+  /**
+   * handleSubmit
+   * Submits the password reset request to the backend.
+   * On success, shows a message and starts a 60-second cooldown before allowing another request.
+   */
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');

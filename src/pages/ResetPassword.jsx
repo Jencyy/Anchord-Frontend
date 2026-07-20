@@ -7,6 +7,17 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
+/**
+ * ResetPassword Page
+ * -----------------------------------------------------------
+ * Allows users to set a new password using a token received via email.
+ * -----------------------------------------------------------
+ */
+
+/**
+ * ResetPassword Component
+ * Renders the form to input a new password and confirm it.
+ */
 const ResetPassword = () => {
   const { token } = useParams();
   const navigate = useNavigate();
@@ -17,6 +28,11 @@ const ResetPassword = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
+  /**
+   * handleSubmit
+   * Submits the new password along with the reset token to the backend.
+   * Validates that both passwords match before submitting.
+   */
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');

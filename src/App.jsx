@@ -15,6 +15,10 @@ import ResetPassword from './pages/ResetPassword';
 import Dashboard from './pages/Dashboard';
 import Onboarding from './pages/Onboarding';
 import AddHabit from './pages/AddHabit';
+import HabitsLayout from './pages/HabitsLayout';
+import HabitsView from './pages/HabitsView';
+import ScheduleView from './pages/ScheduleView';
+import SettingsView from './components/SettingsView';
 
 /**
  * App Component
@@ -37,22 +41,14 @@ function App() {
               </ProtectedRoute>
             } 
           />
-          <Route 
-            path="/add-habit" 
-            element={
-              <ProtectedRoute>
-                <AddHabit />
-              </ProtectedRoute>
-            } 
-          />
-          <Route 
-            path="/" 
-            element={
-              <ProtectedRoute>
-                <Dashboard />
-              </ProtectedRoute>
-            } 
-          />
+            <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>}>
+              <Route element={<HabitsLayout />}>
+                <Route index element={<HabitsView />} />
+                <Route path="add-habit" element={<AddHabit />} />
+              </Route>
+              <Route path="schedule" element={<ScheduleView />} />
+              <Route path="settings" element={<SettingsView />} />
+            </Route>
         </Routes>
       </AuthProvider>
     </Router>

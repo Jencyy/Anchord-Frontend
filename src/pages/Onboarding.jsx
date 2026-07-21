@@ -173,7 +173,7 @@ const Onboarding = () => {
 
           {/* Option B: Manual */}
           <button 
-            onClick={() => {
+            onClick={() => {0.
               setPrefilledBlocks([]);
               setStep('builder');
             }}
@@ -206,7 +206,7 @@ const Onboarding = () => {
               We know that for a {user?.lifeStage || 'person'} like you, not every day is exactly the same. Just write in your own messy format—no spelling checks needed! 
               Mention your weekdays and days off, and we'll figure it out.
             </p>
-
+  
             <textarea
               value={aiText}
               onChange={(e) => setAiText(e.target.value)}

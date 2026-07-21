@@ -2,8 +2,9 @@
  * HabitList Component
  * Middle column of the 3-column layout displaying the list of habits.
  */
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import confetti from 'canvas-confetti';
 
 const PlusIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
@@ -25,13 +26,24 @@ const CheckIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
 );
 
-const HabitItem = ({ habit, isSelected, onSelect, todayLog, onLogToggle }) => {
+const HabitItem = ({ habit, isSelected, onSelect, todayLog, onLogToggle, yesterdayLog }) => {
   const isCompleted = todayLog?.status === 'completed';
   const isDisrupted = todayLog?.status === 'disrupted';
+  
+  // A miss yesterday is defined as no log, or a log that is 'skipped' or 'failed' (but not disrupted)
+  const missedYesterday = !yesterdayLog || yesterdayLog.status === 'skipped' || yesterdayLog.status === 'failed';
 
   return (
     <div 
-      onClick={() => onSelect(habit)}
+      onClick={() => {
+        // 1. Select the habit for details view
+        onSelect(habit);
+        // 2. Cycle the status
+        let nextStatus = 'completed';
+        if (todayLog?.status === 'completed') nextStatus = 'disrupted';
+        if (todayLog?.status === 'disrupted') nextStatus = 'skipped';
+        onLogToggle(habit._id, nextStatus);
+      }}
       className={`flex items-center justify-between p-4 cursor-pointer transition-colors border-b border-border/50 last:border-b-0
         ${isSelected ? 'bg-primary/5' : 'bg-surface hover:bg-black/5'}
       `}
@@ -57,28 +69,28 @@ const HabitItem = ({ habit, isSelected, onSelect, todayLog, onLogToggle }) => {
           )}
         </button>
         <div>
-          <p className={`text-sm font-bold truncate ${isSelected ? 'text-primary' : 'text-foreground'} ${isCompleted ? 'line-through opacity-70' : ''}`}>{habit.name}</p>
+          <div className="flex items-center gap-2">
+            <p className={`text-sm font-bold truncate ${isSelected ? 'text-primary' : 'text-foreground'} ${isCompleted ? 'line-through opacity-70' : ''}`}>{habit.name}</p>
+            {/* NEVER MISS TWICE LOGIC */}
+            {!isCompleted && !isDisrupted && missedYesterday && (
+              <span className="text-[9px] font-black uppercase tracking-wider text-white bg-destructive px-1.5 py-0.5 rounded shadow-sm animate-pulse">
+                Bounce Back
+              </span>
+            )}
+          </div>
           <p className="text-xs text-muted-foreground mt-0.5">{habit.min_version_name}</p>
         </div>
       </div>
       <div className="flex items-center gap-2">
-        <button 
-          onClick={(e) => { 
-            e.stopPropagation(); 
-            // Cycle through statuses for testing: completed -> disrupted -> skipped
-            let nextStatus = 'completed';
-            if (todayLog?.status === 'completed') nextStatus = 'disrupted';
-            if (todayLog?.status === 'disrupted') nextStatus = 'skipped';
-            onLogToggle(habit._id, nextStatus);
-          }}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border bg-surface hover:bg-black/5 text-xs font-semibold text-foreground transition-colors shadow-sm"
-        >
-          {todayLog?.status ? (
-            <span className="capitalize">{todayLog.status}</span>
-          ) : (
-            <>Log</>
-          )}
-        </button>
+        {todayLog?.status ? (
+          <span className="capitalize text-xs font-bold text-muted-foreground bg-black/5 px-2 py-1 rounded-md">
+            {todayLog.status}
+          </span>
+        ) : (
+          <span className="text-xs font-bold text-muted-foreground/50">
+            Unlogged
+          </span>
+        )}
       </div>
     </div>
   );
@@ -108,11 +120,39 @@ const HabitList = ({ filter, habits, anchors, habitLogs, setHabitLogs, selectedH
     return `${year}-${month}-${day}`;
   };
 
+  const getYesterdayString = () => {
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    const year = yesterday.getFullYear();
+    const month = String(yesterday.getMonth() + 1).padStart(2, '0');
+    const day = String(yesterday.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
   const todayStr = getTodayString();
+  const yesterdayStr = getYesterdayString();
+  const [celebrationToast, setCelebrationToast] = useState(null);
 
   const handleLogToggle = async (habitId, status) => {
     try {
       const token = localStorage.getItem('token');
+      
+      // Find habit for celebration text
+      const habit = habits.find(h => h._id === habitId);
+      
+      if (status === 'completed') {
+        confetti({
+          particleCount: 100,
+          spread: 70,
+          origin: { y: 0.6 },
+          colors: ['#f59e0b', '#10b981', '#3b82f6', '#ef4444']
+        });
+        
+        const message = habit?.celebration || "Great job!";
+        setCelebrationToast(message);
+        setTimeout(() => setCelebrationToast(null), 3000);
+      }
+
       // Optimistically update UI
       setHabitLogs(prev => {
         const filtered = prev.filter(l => !(l.habitId === habitId && l.date === todayStr));
@@ -123,10 +163,6 @@ const HabitList = ({ filter, habits, anchors, habitLogs, setHabitLogs, selectedH
       });
 
       // API Call
-      // We will send 'skipped' to backend if we want to explicitly record a skip, 
-      // but for toggle logic, let's say 'skipped' means we don't care, just record it.
-      // Wait, if it's 'skipped', we still want to save it as skipped or deleted.
-      // The backend upserts it.
       await fetch(`http://localhost:5000/api/habits/${habitId}/logs`, {
         method: 'POST',
         headers: {
@@ -137,7 +173,6 @@ const HabitList = ({ filter, habits, anchors, habitLogs, setHabitLogs, selectedH
       });
     } catch (error) {
       console.error('Failed to log habit:', error);
-      // Revert optimistic update? For now just log error.
     }
   };
 
@@ -187,6 +222,7 @@ const HabitList = ({ filter, habits, anchors, habitLogs, setHabitLogs, selectedH
             ) : (
               habits.map(habit => {
                 const todayLog = habitLogs.find(l => l.habitId === habit._id && l.date === todayStr);
+                const yesterdayLog = habitLogs.find(l => l.habitId === habit._id && l.date === yesterdayStr);
                 return (
                   <HabitItem 
                     key={habit._id} 
@@ -194,6 +230,7 @@ const HabitList = ({ filter, habits, anchors, habitLogs, setHabitLogs, selectedH
                     isSelected={selectedHabit?._id === habit._id}
                     onSelect={setSelectedHabit}
                     todayLog={todayLog}
+                    yesterdayLog={yesterdayLog}
                     onLogToggle={handleLogToggle}
                   />
                 );
@@ -202,50 +239,68 @@ const HabitList = ({ filter, habits, anchors, habitLogs, setHabitLogs, selectedH
           </div>
         ) : (
           // ── GROUPED LIST FOR ROUTINES ──
-          filteredAnchors.length === 0 ? (
-            <div className="p-10 text-center text-muted-foreground text-sm font-medium">
-              No routines found for this filter.
-            </div>
-          ) : (
-            filteredAnchors.map(anchor => {
+          (() => {
+            const anchorsWithHabits = filteredAnchors.map(anchor => {
               const anchorHabits = habits.filter(h => {
                  const id = h.anchorId?._id || h.anchorId;
                  return id === anchor._id;
               });
+              return { anchor, anchorHabits };
+            }).filter(item => item.anchorHabits.length > 0);
 
+            if (anchorsWithHabits.length === 0) {
               return (
-                <div key={anchor._id} className="mb-4">
-                  <div className="px-4 py-2 bg-sidebar border-y border-border/50 sticky top-0 flex items-center justify-between shadow-sm z-10">
-                    <span className="text-xs font-bold text-foreground uppercase tracking-wider">{anchor.label}</span>
-                    <span className="text-[10px] font-bold text-muted-foreground">{anchor.time_start} - {anchor.time_end}</span>
+                <div className="p-10 flex flex-col items-center justify-center text-center">
+                  <div className="h-12 w-12 rounded-full bg-surface border border-border flex items-center justify-center text-muted-foreground mb-3 shadow-sm">
+                    <CheckIcon />
                   </div>
-                  <div className="bg-surface">
-                    {anchorHabits.length === 0 ? (
-                      <div className="px-4 py-3 text-xs text-muted-foreground italic bg-surface/50">
-                        No habits in this block yet.
-                      </div>
-                    ) : (
-                      anchorHabits.map(habit => {
-                        const todayLog = habitLogs.find(l => l.habitId === habit._id && l.date === todayStr);
-                        return (
-                          <HabitItem 
-                            key={habit._id} 
-                            habit={habit} 
-                            isSelected={selectedHabit?._id === habit._id}
-                            onSelect={setSelectedHabit}
-                            todayLog={todayLog}
-                            onLogToggle={handleLogToggle}
-                          />
-                        );
-                      })
-                    )}
-                  </div>
+                  <p className="font-bold text-foreground text-sm mb-1">No habits scheduled</p>
+                  <p className="text-xs text-muted-foreground max-w-[200px] mb-4">You haven't assigned any habits to this routine yet.</p>
+                  <button 
+                    onClick={() => navigate('/add-habit')}
+                    className="px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-bold shadow-sm hover:bg-primary-hover transition-colors"
+                  >
+                    Create Habit
+                  </button>
                 </div>
               );
-            })
-          )
+            }
+
+            return anchorsWithHabits.map(({ anchor, anchorHabits }) => (
+              <div key={anchor._id} className="mb-4">
+                <div className="px-4 py-2 bg-sidebar border-y border-border/50 sticky top-0 flex items-center justify-between shadow-sm z-10">
+                  <span className="text-xs font-bold text-foreground uppercase tracking-wider">{anchor.label}</span>
+                  <span className="text-[10px] font-bold text-muted-foreground">{anchor.time_start} - {anchor.time_end}</span>
+                </div>
+                <div className="bg-surface">
+                  {anchorHabits.map(habit => {
+                    const todayLog = habitLogs.find(l => l.habitId === habit._id && l.date === todayStr);
+                    const yesterdayLog = habitLogs.find(l => l.habitId === habit._id && l.date === yesterdayStr);
+                    return (
+                      <HabitItem 
+                        key={habit._id} 
+                        habit={habit} 
+                        isSelected={selectedHabit?._id === habit._id}
+                        onSelect={setSelectedHabit}
+                        todayLog={todayLog}
+                        yesterdayLog={yesterdayLog}
+                        onLogToggle={handleLogToggle}
+                      />
+                    );
+                  })}
+                </div>
+              </div>
+            ));
+          })()
         )}
       </div>
+
+      {/* Celebration Toast Notification */}
+      {celebrationToast && (
+        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 bg-foreground text-background px-6 py-3 rounded-full shadow-2xl font-black text-sm tracking-wide z-50 animate-in fade-in slide-in-from-bottom-4">
+          ✨ {celebrationToast}
+        </div>
+      )}
 
     </div>
   );

@@ -3,7 +3,7 @@
  * Left column of the 3-column dashboard layout.
  */
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const LogOutIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" /><polyline points="16 17 21 12 16 7" /><line x1="21" x2="9" y1="12" y2="12" /></svg>
@@ -25,12 +25,15 @@ const SunIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="4" /><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" /></svg>
 );
 
-const Sidebar = ({ user, logout, filter, setFilter, currentView, setCurrentView }) => {
+const Sidebar = ({ user, logout, filter, setFilter }) => {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const isHabits = location.pathname === '/' || location.pathname === '/add-habit';
 
   return (
     <aside className="hidden lg:flex w-64 xl:w-72 border-r border-border bg-sidebar h-full flex-col pt-4 overflow-y-auto shrink-0 z-10">
-      <div className="px-6 mb-8 flex items-center gap-2 cursor-pointer" onClick={() => { setCurrentView('habits'); navigate('/'); }}>
+      <div className="px-6 mb-8 flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
         <img src="/Anchord-logo.png" alt="Anchord Logo" className="h-16 object-contain" />
       </div>
 
@@ -50,24 +53,24 @@ const Sidebar = ({ user, logout, filter, setFilter, currentView, setCurrentView 
         <p className="px-4 text-[10px] font-extrabold text-muted-foreground uppercase tracking-wider mb-2 mt-4">Habits</p>
         
         <button
-          onClick={() => { setFilter('all'); setCurrentView('habits'); }}
-          className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-semibold transition-colors ${filter === 'all' && currentView === 'habits' ? 'bg-primary text-primary-foreground shadow-sm' : 'text-foreground hover:bg-black/5'}`}
+          onClick={() => { setFilter('all'); navigate('/'); }}
+          className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-semibold transition-colors ${filter === 'all' && isHabits ? 'bg-primary text-primary-foreground shadow-sm' : 'text-foreground hover:bg-black/5'}`}
         >
           <UserIcon />
           All Habits
         </button>
         
         <button
-          onClick={() => { setFilter('weekday'); setCurrentView('habits'); }}
-          className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-semibold transition-colors ${filter === 'weekday' && currentView === 'habits' ? 'bg-primary text-primary-foreground shadow-sm' : 'text-foreground hover:bg-black/5'}`}
+          onClick={() => { setFilter('weekday'); navigate('/'); }}
+          className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-semibold transition-colors ${filter === 'weekday' && isHabits ? 'bg-primary text-primary-foreground shadow-sm' : 'text-foreground hover:bg-black/5'}`}
         >
           <CalendarIcon />
           Weekday Routine
         </button>
 
         <button
-          onClick={() => { setFilter('day_off'); setCurrentView('habits'); }}
-          className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-semibold transition-colors ${filter === 'day_off' && currentView === 'habits' ? 'bg-primary text-primary-foreground shadow-sm' : 'text-foreground hover:bg-black/5'}`}
+          onClick={() => { setFilter('day_off'); navigate('/'); }}
+          className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-semibold transition-colors ${filter === 'day_off' && isHabits ? 'bg-primary text-primary-foreground shadow-sm' : 'text-foreground hover:bg-black/5'}`}
         >
           <SunIcon />
           Day Off Routine
@@ -77,15 +80,15 @@ const Sidebar = ({ user, logout, filter, setFilter, currentView, setCurrentView 
       <div className="p-3 mt-auto border-t border-border space-y-1">
         <p className="px-4 text-[10px] font-extrabold text-muted-foreground uppercase tracking-wider mb-2 mt-2">Preferences</p>
         <button
-          onClick={() => setCurrentView('edit_schedule')}
-          className={`w-full flex items-center gap-3 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${currentView === 'edit_schedule' ? 'bg-primary/10 text-primary' : 'text-foreground hover:bg-black/5'}`}
+          onClick={() => navigate('/schedule')}
+          className={`w-full flex items-center gap-3 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${location.pathname === '/schedule' ? 'bg-primary/10 text-primary' : 'text-foreground hover:bg-black/5'}`}
         >
           <CalendarIcon />
           Edit Schedule
         </button>
         <button
-          onClick={() => setCurrentView('settings')}
-          className={`w-full flex items-center gap-3 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${currentView === 'settings' ? 'bg-primary/10 text-primary' : 'text-foreground hover:bg-black/5'}`}
+          onClick={() => navigate('/settings')}
+          className={`w-full flex items-center gap-3 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${location.pathname === '/settings' ? 'bg-primary/10 text-primary' : 'text-foreground hover:bg-black/5'}`}
         >
           <SettingsIcon />
           App Settings

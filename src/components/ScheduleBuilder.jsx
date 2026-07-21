@@ -85,6 +85,12 @@ const ScheduleBuilder = ({ onComplete, userLifeStage, existingAnchors = [], onSw
   const [isSaving, setIsSaving] = useState(false);
   const [saveError, setSaveError] = useState('');
 
+  // AI Parsing State (embedded)
+  const [showAI, setShowAI] = useState(false);
+  const [aiText, setAiText] = useState('');
+  const [isParsing, setIsParsing] = useState(false);
+  const [parseError, setParseError] = useState('');
+
   const tabBlocks = blocks.filter(b => b.day_type === activeTab);
   const suggestions = SUGGESTIONS[userLifeStage] || SUGGESTIONS['Mixed'];
 
@@ -186,7 +192,95 @@ const ScheduleBuilder = ({ onComplete, userLifeStage, existingAnchors = [], onSw
     }
   };
 
+  const handleAiParse = async () => {
+    if (!aiText.trim()) {
+      setParseError('Please describe your day first.');
+      return;
+    }
+
+    setIsParsing(true);
+    setParseError('');
+
+    try {
+      const token = localStorage.getItem('token');
+      const res = await axios.post(
+        'http://localhost:5000/api/ai/parse-schedule',
+        { text: aiText, lifeStage: userLifeStage },
+        { headers: { 'x-auth-token': token } }
+      );
+      
+      const blocksWithFlags = res.data.map(b => ({ ...b, isNew: true, _id: `ai_${Math.random()}` }));
+      setBlocks(prev => [...prev, ...blocksWithFlags]);
+      setShowAI(false);
+      setAiText('');
+    } catch (err) {
+      console.error(err);
+      setParseError(err.response?.data?.msg || 'Failed to process text. Try again or add manually.');
+    } finally {
+      setIsParsing(false);
+    }
+  };
+
   const newBlockCount = blocks.filter(b => b.isNew).length;
+
+  if (showAI) {
+    return (
+      <div className="flex flex-col h-full bg-surface animate-in fade-in zoom-in-95 duration-300 p-6 md:p-8 overflow-y-auto w-full items-center">
+        <div className="max-w-xl w-full pt-8">
+          <button 
+            onClick={() => setShowAI(false)}
+            className="text-sm font-semibold text-muted-foreground hover:text-foreground flex items-center gap-1 mb-6"
+          >
+            ← Back
+          </button>
+
+          <div className="flex items-center gap-3 mb-2">
+            <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+              <SparklesIcon />
+            </div>
+            <h3 className="text-2xl font-bold text-foreground">Tell us how your days usually go</h3>
+          </div>
+          <p className="text-muted-foreground mb-6 text-sm leading-relaxed">
+            We know that for a {userLifeStage} like you, not every day is exactly the same. Just write in your own messy format—no spelling checks needed! 
+            Mention your weekdays and days off, and we'll figure it out.
+          </p>
+
+          <textarea
+            value={aiText}
+            onChange={(e) => setAiText(e.target.value)}
+            placeholder="e.g., On weekdays I wake up at 7am, do chores till 9, then deep work till 1pm... On my days off I sleep in till 9:30 and read in the afternoon..."
+            className="w-full h-40 p-4 rounded-xl border border-border bg-background focus:ring-2 focus:ring-primary/20 focus:border-primary resize-none text-foreground mb-4"
+            disabled={isParsing}
+          />
+
+          {parseError && (
+            <div className="mb-4 p-3 rounded-lg bg-destructive/10 border border-destructive/20 text-destructive text-sm font-medium">
+              {parseError}
+            </div>
+          )}
+
+          <button
+            onClick={handleAiParse}
+            disabled={isParsing || !aiText.trim()}
+            className={`w-full h-12 rounded-xl font-bold flex items-center justify-center gap-2 transition-all ${
+              isParsing || !aiText.trim()
+                ? 'bg-muted text-muted-foreground cursor-not-allowed'
+                : 'bg-primary hover:bg-primary-hover text-primary-foreground shadow-sm active:scale-[0.98]'
+            }`}
+          >
+            {isParsing ? (
+              <>
+                <div className="h-5 w-5 rounded-full border-2 border-white/20 border-t-white animate-spin"></div>
+                Parsing your schedule...
+              </>
+            ) : (
+              'Generate My Schedule'
+            )}
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={isEmbedded ? "flex-1 flex flex-col w-full min-h-0" : "max-w-3xl mx-auto animate-in fade-in slide-in-from-bottom-6 duration-700 delay-100 min-h-screen py-10 px-4"}>
@@ -256,15 +350,13 @@ const ScheduleBuilder = ({ onComplete, userLifeStage, existingAnchors = [], onSw
                     <p className="text-sm font-semibold text-foreground">No blocks yet</p>
                     <p className="text-xs mt-1">Use the form to add your first time block</p>
                   </div>
-                  {onSwitchToAI && (
-                    <button
-                      type="button"
-                      onClick={onSwitchToAI}
-                      className="mt-2 px-4 py-2 bg-primary/10 hover:bg-primary/20 text-primary font-bold text-sm rounded-lg transition-colors flex items-center gap-2"
-                    >
-                      Auto-fill with AI
-                    </button>
-                  )}
+                  <button
+                    type="button"
+                    onClick={onSwitchToAI ? onSwitchToAI : () => setShowAI(true)}
+                    className="mt-2 px-4 py-2 bg-primary/10 hover:bg-primary/20 text-primary font-bold text-sm rounded-lg transition-colors flex items-center gap-2"
+                  >
+                    <SparklesIcon size={14} /> Auto-fill with AI
+                  </button>
                 </div>
               ) : (
                 <div className="space-y-3">

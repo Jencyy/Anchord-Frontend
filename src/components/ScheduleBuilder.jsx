@@ -283,7 +283,7 @@ const ScheduleBuilder = ({ onComplete, userLifeStage, existingAnchors = [], onSw
   }
 
   return (
-    <div className={isEmbedded ? "flex-1 flex flex-col w-full min-h-0" : "max-w-3xl mx-auto animate-in fade-in slide-in-from-bottom-6 duration-700 delay-100 min-h-screen py-10 px-4"}>
+    <div className={isEmbedded ? "flex-1 flex flex-col w-full min-h-0" : "max-w-5xl mx-auto animate-in fade-in slide-in-from-bottom-6 duration-700 delay-100 min-h-screen py-10 px-4"}>
       {!isEmbedded && (
         <div className="max-w-3xl mx-auto mb-10 text-center animate-in fade-in slide-in-from-bottom-4 duration-700">
           <div className="inline-flex items-center justify-center gap-2 bg-surface border border-border text-primary text-xs font-bold px-4 py-1.5 rounded-full mb-6 shadow-sm">
@@ -299,7 +299,7 @@ const ScheduleBuilder = ({ onComplete, userLifeStage, existingAnchors = [], onSw
         </div>
       )}
 
-      <div className={isEmbedded ? "flex-1 flex flex-col min-h-0 w-full" : "max-w-3xl mx-auto animate-in fade-in slide-in-from-bottom-6 duration-700 delay-100"}>
+      <div className={isEmbedded ? "flex-1 flex flex-col min-h-0 w-full" : "max-w-5xl mx-auto animate-in fade-in slide-in-from-bottom-6 duration-700 delay-100"}>
         <div className={`flex flex-col flex-1 min-h-0 ${!isEmbedded ? 'bg-surface rounded-2xl shadow-sm border border-border overflow-hidden' : 'w-full'}`}>
           
           {/* Tab Switcher */}

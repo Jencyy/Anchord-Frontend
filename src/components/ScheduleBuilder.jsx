@@ -146,7 +146,7 @@ const ScheduleBuilder = ({ onComplete, userLifeStage, existingAnchors = [], onSw
       if (!window.confirm("Are you sure you want to delete this block? This may affect habits attached to it.")) return;
       try {
         const token = localStorage.getItem('token');
-        await axios.delete(`http://localhost:5000/api/anchors/${id}`, { headers: { 'x-auth-token': token } });
+        await axios.delete(`${import.meta.env.VITE_API_URL}/api/anchors/${id}`, { headers: { 'x-auth-token': token } });
       } catch (err) {
         console.error('Failed to delete anchor', err);
         alert('Could not delete block from database.');
@@ -176,7 +176,7 @@ const ScheduleBuilder = ({ onComplete, userLifeStage, existingAnchors = [], onSw
       const headers = { 'x-auth-token': token };
 
       for (const b of newBlocks) {
-        await axios.post('http://localhost:5000/api/anchors', {
+        await axios.post(`${import.meta.env.VITE_API_URL}/api/anchors`, {
           label: b.label,
           time_start: b.time_start,
           time_end: b.time_end,
@@ -204,7 +204,7 @@ const ScheduleBuilder = ({ onComplete, userLifeStage, existingAnchors = [], onSw
     try {
       const token = localStorage.getItem('token');
       const res = await axios.post(
-        'http://localhost:5000/api/ai/parse-schedule',
+        `${import.meta.env.VITE_API_URL}/api/ai/parse-schedule`,
         { text: aiText, lifeStage: userLifeStage },
         { headers: { 'x-auth-token': token } }
       );

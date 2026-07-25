@@ -52,11 +52,11 @@ const AddHabit = () => {
     const fetchAnchors = async () => {
       try {
         const token = localStorage.getItem('token');
-        const res = await axios.get('http://localhost:5000/api/anchors', {
+        const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/anchors`, {
           headers: { 'x-auth-token': token }
         });
         
-        const habitsRes = await axios.get('http://localhost:5000/api/habits', {
+        const habitsRes = await axios.get(`${import.meta.env.VITE_API_URL}/api/habits`, {
           headers: { 'x-auth-token': token }
         });
         
@@ -79,7 +79,7 @@ const AddHabit = () => {
     try {
       const token = localStorage.getItem('token');
       const res = await axios.post(
-        'http://localhost:5000/api/ai/suggest-anchors',
+        `${import.meta.env.VITE_API_URL}/api/ai/suggest-anchors`,
         { habit: formData, anchors: anchors, lifeStage: user?.lifeStage },
         { headers: { 'x-auth-token': token } }
       );
@@ -132,7 +132,7 @@ const AddHabit = () => {
     try {
       const token = localStorage.getItem('token');
       await axios.post(
-        'http://localhost:5000/api/habits',
+        `${import.meta.env.VITE_API_URL}/api/habits`,
         { ...formData, anchorIds: selectedAnchorIds },
         { headers: { 'x-auth-token': token } }
       );

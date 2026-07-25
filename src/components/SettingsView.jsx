@@ -36,7 +36,7 @@ const SettingsView = () => {
       const payload = { ...formData };
       if (!payload.password) delete payload.password;
       
-      const res = await axios.put('http://localhost:5000/api/users/profile', payload, {
+      const res = await axios.put(`${import.meta.env.VITE_API_URL}/api/users/profile`, payload, {
         headers: { 'x-auth-token': token }
       });
       

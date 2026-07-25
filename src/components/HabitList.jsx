@@ -163,7 +163,7 @@ const HabitList = ({ filter, habits, anchors, habitLogs, setHabitLogs, selectedH
       });
 
       // API Call
-      await fetch(`http://localhost:5000/api/habits/${habitId}/logs`, {
+      await fetch(`${import.meta.env.VITE_API_URL}/api/habits/${habitId}/logs`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -25,9 +25,9 @@ const Dashboard = () => {
     try {
       const token = localStorage.getItem('token');
       const [anchorsRes, habitsRes, logsRes] = await Promise.all([
-        axios.get('http://localhost:5000/api/anchors', { headers: { 'x-auth-token': token } }),
-        axios.get('http://localhost:5000/api/habits', { headers: { 'x-auth-token': token } }),
-        axios.get('http://localhost:5000/api/habits/logs', { headers: { 'x-auth-token': token } })
+        axios.get(`${import.meta.env.VITE_API_URL}/api/anchors`, { headers: { 'x-auth-token': token } }),
+        axios.get(`${import.meta.env.VITE_API_URL}/api/habits`, { headers: { 'x-auth-token': token } }),
+        axios.get(`${import.meta.env.VITE_API_URL}/api/habits/logs`, { headers: { 'x-auth-token': token } })
       ]);
       
       setAnchors(anchorsRes.data);

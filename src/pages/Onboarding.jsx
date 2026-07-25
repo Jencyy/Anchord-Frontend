@@ -40,7 +40,7 @@ const Onboarding = () => {
     const checkAnchors = async () => {
       try {
         const token = localStorage.getItem('token');
-        const res = await axios.get('http://localhost:5000/api/anchors', {
+        const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/anchors`, {
           headers: { 'x-auth-token': token },
         });
         
@@ -78,7 +78,7 @@ const Onboarding = () => {
     try {
       const token = localStorage.getItem('token');
       const res = await axios.post(
-        'http://localhost:5000/api/ai/parse-schedule',
+        `${import.meta.env.VITE_API_URL}/api/ai/parse-schedule`,
         { text: aiText, lifeStage: user?.lifeStage },
         { headers: { 'x-auth-token': token } }
       );

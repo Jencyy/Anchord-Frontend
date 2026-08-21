@@ -23,13 +23,13 @@ const Dashboard = () => {
   const fetchAnchors = async () => {
     setLoading(true);
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('token') || sessionStorage.getItem('token');
       const [anchorsRes, habitsRes, logsRes] = await Promise.all([
         axios.get(`${import.meta.env.VITE_API_URL}/api/anchors`, { headers: { 'x-auth-token': token } }),
         axios.get(`${import.meta.env.VITE_API_URL}/api/habits`, { headers: { 'x-auth-token': token } }),
         axios.get(`${import.meta.env.VITE_API_URL}/api/habits/logs`, { headers: { 'x-auth-token': token } })
       ]);
-      
+
       setAnchors(anchorsRes.data);
       setHabits(habitsRes.data);
       setHabitLogs(logsRes.data);
@@ -58,22 +58,22 @@ const Dashboard = () => {
 
   return (
     <div className="h-screen w-full bg-background font-sans flex overflow-hidden">
-      <Sidebar 
-        user={user} 
-        logout={logout} 
-        filter={filter} 
-        setFilter={setFilter} 
+      <Sidebar
+        user={user}
+        logout={logout}
+        filter={filter}
+        setFilter={setFilter}
       />
-      <Outlet context={{ 
+      <Outlet context={{
         user,
-        filter, 
-        habits, 
-        anchors, 
-        habitLogs, 
-        setHabitLogs, 
-        selectedHabit, 
-        setSelectedHabit, 
-        fetchAnchors 
+        filter,
+        habits,
+        anchors,
+        habitLogs,
+        setHabitLogs,
+        selectedHabit,
+        setSelectedHabit,
+        fetchAnchors
       }} />
     </div>
   );

@@ -51,7 +51,7 @@ const AddHabit = () => {
   useEffect(() => {
     const fetchAnchors = async () => {
       try {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('token') || sessionStorage.getItem('token');
         const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/anchors`, {
           headers: { 'x-auth-token': token }
         });
@@ -77,7 +77,7 @@ const AddHabit = () => {
     if (!formData.name) return;
     setIsAiLoading(true);
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('token') || sessionStorage.getItem('token');
       const res = await axios.post(
         `${import.meta.env.VITE_API_URL}/api/ai/suggest-anchors`,
         { habit: formData, anchors: anchors, lifeStage: user?.lifeStage },
@@ -130,7 +130,7 @@ const AddHabit = () => {
     if (!formData.name || selectedAnchorIds.length === 0) return;
     setIsSaving(true);
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('token') || sessionStorage.getItem('token');
       await axios.post(
         `${import.meta.env.VITE_API_URL}/api/habits`,
         { ...formData, anchorIds: selectedAnchorIds },

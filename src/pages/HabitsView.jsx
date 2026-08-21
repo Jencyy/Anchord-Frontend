@@ -4,11 +4,13 @@ import HabitDetails from '../components/HabitDetails';
 
 const HabitsView = () => {
   const contextProps = useOutletContext();
-  
+
   return (
-    <HabitDetails 
-      habit={contextProps.selectedHabit} 
-      habitLogs={contextProps.habitLogs} 
+    <HabitDetails
+      habit={contextProps.selectedHabit}
+      habitLogs={contextProps.habitLogs}
+      anchors={contextProps.anchors}
+      setSelectedHabit={contextProps.setSelectedHabit}
     />
   );
 };

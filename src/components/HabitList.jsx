@@ -6,114 +6,103 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import confetti from 'canvas-confetti';
 
-const PlusIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+const AnchorIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-[#e89454]"><circle cx="12" cy="5" r="3"/><line x1="12" y1="22" x2="12" y2="8"/><path d="M5 12H2a10 10 0 0 0 20 0h-3"/></svg>
 );
 
-const SearchIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8" /><line x1="21" x2="16.65" y1="21" y2="16.65" /></svg>
-);
-
-const FilterIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" /></svg>
-);
-
-const MoreIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="1" /><circle cx="12" cy="5" r="1" /><circle cx="12" cy="19" r="1" /></svg>
+const FireIconSmall = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z" /></svg>
 );
 
 const CheckIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
 );
 
-const HabitItem = ({ habit, isSelected, onSelect, todayLog, onLogToggle, yesterdayLog }) => {
+// We need a function to calculate the streak for the habit item to display "14d"
+const getStreak = (habit, habitLogs) => {
+  const logs = habitLogs.filter(l => l.habitId === habit._id);
+  let currentStreak = 0;
+  const today = new Date();
+  for (let i = 0; i < 365; i++) {
+    const d = new Date(today);
+    d.setDate(today.getDate() - i);
+    const dateStr = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    const log = logs.find(l => l.date === dateStr);
+    
+    if (log && log.status === 'completed') {
+      currentStreak++;
+    } else if (log && log.status === 'disrupted') {
+      continue;
+    } else {
+      if (i === 0 && !log) {
+        continue;
+      }
+      break;
+    }
+  }
+  return currentStreak;
+};
+
+const HabitItem = ({ habit, isSelected, onSelect, todayLog, onLogToggle, yesterdayLog, streak }) => {
   const isCompleted = todayLog?.status === 'completed';
   const isDisrupted = todayLog?.status === 'disrupted';
-  
-  // A miss yesterday is defined as no log, or a log that is 'skipped' or 'failed' (but not disrupted)
-  const missedYesterday = !yesterdayLog || yesterdayLog.status === 'skipped' || yesterdayLog.status === 'failed';
 
   return (
-    <div 
+    <div
       onClick={() => {
-        // 1. Select the habit for details view
         onSelect(habit);
-        // 2. Cycle the status
         let nextStatus = 'completed';
         if (todayLog?.status === 'completed') nextStatus = 'disrupted';
         if (todayLog?.status === 'disrupted') nextStatus = 'skipped';
         onLogToggle(habit._id, nextStatus);
       }}
-      className={`flex items-center justify-between p-4 cursor-pointer transition-colors border-b border-border/50 last:border-b-0
-        ${isSelected ? 'bg-primary/5' : 'bg-surface hover:bg-black/5'}
-      `}
+      className={`flex items-center justify-between p-4 cursor-pointer transition-colors border border-border/10 rounded-xl mb-3 ${isSelected ? 'bg-primary/5 border-primary/30' : 'bg-[#18181b] hover:bg-[#202024] dark:bg-[#18181b] bg-white shadow-sm'}`}
     >
-      <div className="flex items-center gap-3">
-        <button 
+      <div className="flex items-center gap-4">
+        <button
           onClick={(e) => {
             e.stopPropagation();
             onLogToggle(habit._id, isCompleted ? 'skipped' : 'completed');
           }}
-          className={`h-8 w-8 rounded-full flex items-center justify-center shrink-0 border-2 transition-all ${
-            isCompleted 
-              ? 'bg-primary border-primary text-primary-foreground shadow-sm' 
-              : isDisrupted 
+          className={`h-6 w-6 rounded-md flex items-center justify-center shrink-0 border-2 transition-all ${isCompleted
+              ? 'bg-primary border-primary text-primary-foreground shadow-sm'
+              : isDisrupted
                 ? 'bg-amber-500 border-amber-500 text-white'
                 : 'border-muted-foreground/30 text-transparent hover:border-primary/50 hover:text-primary/20'
-          }`}
+            }`}
         >
           {isDisrupted ? (
-            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" /></svg>
           ) : (
             <CheckIcon />
           )}
         </button>
         <div>
-          <div className="flex items-center gap-2">
-            <p className={`text-sm font-bold truncate ${isSelected ? 'text-primary' : 'text-foreground'} ${isCompleted ? 'line-through opacity-70' : ''}`}>{habit.name}</p>
-            {/* NEVER MISS TWICE LOGIC */}
-            {!isCompleted && !isDisrupted && missedYesterday && (
-              <span className="text-[9px] font-black uppercase tracking-wider text-white bg-destructive px-1.5 py-0.5 rounded shadow-sm animate-pulse">
-                Bounce Back
-              </span>
-            )}
-          </div>
-          <p className="text-xs text-muted-foreground mt-0.5">{habit.min_version_name}</p>
+          <p className={`text-[15px] font-bold ${isSelected ? 'text-primary' : 'text-foreground'} ${isCompleted ? 'line-through opacity-50' : ''}`}>{habit.name}</p>
+          <p className="text-[13px] text-muted-foreground mt-0.5">{habit.min_version_name}</p>
         </div>
       </div>
+      
       <div className="flex items-center gap-2">
-        {todayLog?.status ? (
-          <span className="capitalize text-xs font-bold text-muted-foreground bg-black/5 px-2 py-1 rounded-md">
-            {todayLog.status}
-          </span>
-        ) : (
-          <span className="text-xs font-bold text-muted-foreground/50">
-            Unlogged
-          </span>
-        )}
+        <div className="flex items-center gap-1.5 px-2.5 py-1 bg-black/20 dark:bg-white/5 rounded-md text-muted-foreground">
+          <FireIconSmall />
+          <span className="text-xs font-bold">{streak}d</span>
+        </div>
       </div>
     </div>
   );
 };
 
-const HabitList = ({ filter, habits, anchors, habitLogs, setHabitLogs, selectedHabit, setSelectedHabit }) => {
+const HabitList = ({ filter, habits, anchors, habitLogs, setHabitLogs, selectedHabit, setSelectedHabit, user }) => {
   const navigate = useNavigate();
 
-  // Determine title based on filter
-  let title = "All Habits";
-  if (filter === 'weekday') title = "Weekday Routine";
-  if (filter === 'day_off') title = "Day Off Routine";
-
-  // Filter anchors/habits based on selection
   const filteredAnchors = anchors.filter(a => {
     if (filter === 'all') return true;
     return a.day_type === filter;
   });
 
-  // Get today's date string in YYYY-MM-DD local time
   const getTodayString = () => {
     const today = new Date();
-    // Use local date parts to avoid UTC shift
     const year = today.getFullYear();
     const month = String(today.getMonth() + 1).padStart(2, '0');
     const day = String(today.getDate()).padStart(2, '0');
@@ -135,11 +124,9 @@ const HabitList = ({ filter, habits, anchors, habitLogs, setHabitLogs, selectedH
 
   const handleLogToggle = async (habitId, status) => {
     try {
-      const token = localStorage.getItem('token');
-      
-      // Find habit for celebration text
+      const token = localStorage.getItem('token') || sessionStorage.getItem('token');
       const habit = habits.find(h => h._id === habitId);
-      
+
       if (status === 'completed') {
         confetti({
           particleCount: 100,
@@ -147,13 +134,12 @@ const HabitList = ({ filter, habits, anchors, habitLogs, setHabitLogs, selectedH
           origin: { y: 0.6 },
           colors: ['#f59e0b', '#10b981', '#3b82f6', '#ef4444']
         });
-        
+
         const message = habit?.celebration || "Great job!";
         setCelebrationToast(message);
         setTimeout(() => setCelebrationToast(null), 3000);
       }
 
-      // Optimistically update UI
       setHabitLogs(prev => {
         const filtered = prev.filter(l => !(l.habitId === habitId && l.date === todayStr));
         if (status !== 'skipped') {
@@ -162,7 +148,6 @@ const HabitList = ({ filter, habits, anchors, habitLogs, setHabitLogs, selectedH
         return filtered;
       });
 
-      // API Call
       await fetch(`${import.meta.env.VITE_API_URL}/api/habits/${habitId}/logs`, {
         method: 'POST',
         headers: {
@@ -176,126 +161,73 @@ const HabitList = ({ filter, habits, anchors, habitLogs, setHabitLogs, selectedH
     }
   };
 
+  const formattedDate = new Date().toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' });
+  const remainingHabits = habits.length - habitLogs.filter(l => l.date === todayStr && l.status === 'completed').length;
+
   return (
-    <div className="flex-1 min-w-0 bg-surface border-r border-border h-full flex flex-col z-10 shadow-sm relative">
-      
-      {/* Top Header Section */}
-      <div className="p-4 border-b border-border flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-surface sticky top-0 z-10">
-        <h1 className="text-xl font-extrabold text-foreground tracking-tight">{title}</h1>
-        
-        <div className="flex items-center gap-2">
-          <button className="p-2 border border-border rounded-lg bg-surface text-muted-foreground hover:text-foreground hover:bg-black/5 transition-colors">
-            <SearchIcon />
-          </button>
-          <button className="p-2 border border-border rounded-lg bg-surface text-muted-foreground hover:text-foreground hover:bg-black/5 transition-colors">
-            <FilterIcon />
-          </button>
-          <button 
-            onClick={() => navigate('/add-habit')}
-            className="flex items-center gap-1.5 px-3 py-2 bg-primary hover:bg-primary-hover text-primary-foreground text-sm font-bold rounded-lg transition-colors shadow-sm"
-          >
-            <PlusIcon /> Add
-          </button>
-        </div>
+    <div className="flex-1 min-w-0 bg-background h-full flex flex-col z-10 shadow-sm relative px-4 lg:px-12 py-8 overflow-y-auto">
+
+      {/* TOP HEADER */}
+      <div className="mb-10 mt-6 lg:mt-0">
+        <p className="text-xs font-bold text-[#e89454] tracking-widest uppercase mb-2">TODAY • {formattedDate.replace(/\//g, '/')}</p>
+        <h1 className="text-4xl font-extrabold text-foreground tracking-tight mb-2">Good morning, {user?.name?.split(' ')[0] || 'Alex'}</h1>
+        <p className="text-sm text-muted-foreground">{remainingHabits} habits remaining to lock in today's anchors.</p>
       </div>
 
-      {/* Habit List */}
-      <div className="flex-1 overflow-y-auto bg-background/50">
-        
-        {filter === 'all' ? (
-          // ── FLAT LIST FOR "ALL HABITS" ──
-          <div className="bg-surface">
-            {habits.length === 0 ? (
-              <div className="p-10 flex flex-col items-center justify-center text-center">
-                <div className="h-12 w-12 rounded-full bg-surface border border-border flex items-center justify-center text-muted-foreground mb-3 shadow-sm">
-                  <CheckIcon />
-                </div>
-                <p className="font-bold text-foreground text-sm mb-1">No habits yet</p>
-                <p className="text-xs text-muted-foreground max-w-[200px] mb-4">Start by adding your first habit to your routine.</p>
-                <button 
-                  onClick={() => navigate('/add-habit')}
-                  className="px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-bold shadow-sm hover:bg-primary-hover transition-colors"
-                >
-                  Create Habit
-                </button>
-              </div>
-            ) : (
-              habits.map(habit => {
-                const todayLog = habitLogs.find(l => l.habitId === habit._id && l.date === todayStr);
-                const yesterdayLog = habitLogs.find(l => l.habitId === habit._id && l.date === yesterdayStr);
-                return (
-                  <HabitItem 
-                    key={habit._id} 
-                    habit={habit} 
-                    isSelected={selectedHabit?._id === habit._id}
-                    onSelect={setSelectedHabit}
-                    todayLog={todayLog}
-                    yesterdayLog={yesterdayLog}
-                    onLogToggle={handleLogToggle}
-                  />
-                );
-              })
-            )}
-          </div>
+      {/* HABIT LIST */}
+      <div className="flex-1">
+        {filteredAnchors.length === 0 ? (
+           <div className="p-10 flex flex-col items-center justify-center text-center bg-surface border border-border rounded-xl">
+             <p className="font-bold text-foreground mb-4">No habits scheduled</p>
+             <button
+               onClick={() => navigate('/add-habit')}
+               className="px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-bold shadow-sm"
+             >
+               Create Habit
+             </button>
+           </div>
         ) : (
-          // ── GROUPED LIST FOR ROUTINES ──
-          (() => {
-            const anchorsWithHabits = filteredAnchors.map(anchor => {
-              const anchorHabits = habits.filter(h => {
-                 const id = h.anchorId?._id || h.anchorId;
-                 return id === anchor._id;
-              });
-              return { anchor, anchorHabits };
-            }).filter(item => item.anchorHabits.length > 0);
+          filteredAnchors.map(anchor => {
+            const anchorHabits = habits.filter(h => {
+              const id = h.anchorId?._id || h.anchorId;
+              return id === anchor._id;
+            });
+            if (anchorHabits.length === 0) return null;
 
-            if (anchorsWithHabits.length === 0) {
-              return (
-                <div className="p-10 flex flex-col items-center justify-center text-center">
-                  <div className="h-12 w-12 rounded-full bg-surface border border-border flex items-center justify-center text-muted-foreground mb-3 shadow-sm">
-                    <CheckIcon />
+            return (
+              <div key={anchor._id} className="mb-8">
+                <div className="flex items-center justify-between mb-3 border-b border-border/30 pb-2">
+                  <div className="flex items-center gap-2 text-[#e89454]">
+                    <AnchorIcon />
+                    <span className="text-[11px] font-extrabold uppercase tracking-widest">{anchor.label}</span>
                   </div>
-                  <p className="font-bold text-foreground text-sm mb-1">No habits scheduled</p>
-                  <p className="text-xs text-muted-foreground max-w-[200px] mb-4">You haven't assigned any habits to this routine yet.</p>
-                  <button 
-                    onClick={() => navigate('/add-habit')}
-                    className="px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-bold shadow-sm hover:bg-primary-hover transition-colors"
-                  >
-                    Create Habit
-                  </button>
+                  <span className="text-[11px] font-bold text-muted-foreground">{anchor.time_start} - {anchor.time_end}</span>
                 </div>
-              );
-            }
-
-            return anchorsWithHabits.map(({ anchor, anchorHabits }) => (
-              <div key={anchor._id} className="mb-4">
-                <div className="px-4 py-2 bg-sidebar border-y border-border/50 sticky top-0 flex items-center justify-between shadow-sm z-10">
-                  <span className="text-xs font-bold text-foreground uppercase tracking-wider">{anchor.label}</span>
-                  <span className="text-[10px] font-bold text-muted-foreground">{anchor.time_start} - {anchor.time_end}</span>
-                </div>
-                <div className="bg-surface">
+                <div>
                   {anchorHabits.map(habit => {
                     const todayLog = habitLogs.find(l => l.habitId === habit._id && l.date === todayStr);
                     const yesterdayLog = habitLogs.find(l => l.habitId === habit._id && l.date === yesterdayStr);
+                    const streak = getStreak(habit, habitLogs);
                     return (
-                      <HabitItem 
-                        key={habit._id} 
-                        habit={habit} 
+                      <HabitItem
+                        key={habit._id}
+                        habit={habit}
                         isSelected={selectedHabit?._id === habit._id}
                         onSelect={setSelectedHabit}
                         todayLog={todayLog}
                         yesterdayLog={yesterdayLog}
                         onLogToggle={handleLogToggle}
+                        streak={streak}
                       />
                     );
                   })}
                 </div>
               </div>
-            ));
-          })()
+            );
+          })
         )}
       </div>
 
-      {/* Celebration Toast Notification */}
       {celebrationToast && (
         <div className="absolute bottom-6 left-1/2 -translate-x-1/2 bg-foreground text-background px-6 py-3 rounded-full shadow-2xl font-black text-sm tracking-wide z-50 animate-in fade-in slide-in-from-bottom-4">
           ✨ {celebrationToast}

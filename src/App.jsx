@@ -33,22 +33,22 @@ function App() {
           <Route path="/register" element={<Signup />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password/:token" element={<ResetPassword />} />
-          <Route 
-            path="/onboarding" 
+          <Route
+            path="/onboarding"
             element={
               <ProtectedRoute>
                 <Onboarding />
               </ProtectedRoute>
-            } 
+            }
           />
-            <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>}>
-              <Route element={<HabitsLayout />}>
-                <Route index element={<HabitsView />} />
-                <Route path="add-habit" element={<AddHabit />} />
-              </Route>
-              <Route path="schedule" element={<ScheduleView />} />
-              <Route path="settings" element={<SettingsView />} />
+          <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>}>
+            <Route element={<HabitsLayout />}>
+              <Route index element={<HabitsView />} />
+              <Route path="add-habit" element={<AddHabit />} />
             </Route>
+            <Route path="schedule" element={<ScheduleView />} />
+            <Route path="settings" element={<SettingsView />} />
+          </Route>
         </Routes>
       </AuthProvider>
     </Router>

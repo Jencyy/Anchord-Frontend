@@ -18,11 +18,11 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     // Check if token exists on load (e.g. when user refreshes the page)
-    const token = localStorage.getItem('token');
-    const storedUser = localStorage.getItem('user');
+    const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+    const storedUser = localStorage.getItem('user') || sessionStorage.getItem('user');
     
     if (token && storedUser) {
-      // If token and user exist in local storage, restore the session
+      // If token and user exist in storage, restore the session
       setUser(JSON.parse(storedUser));
       // Set the default axios header so subsequent requests are authenticated
       axios.defaults.headers.common['x-auth-token'] = token;
@@ -54,11 +54,23 @@ export const AuthProvider = ({ children }) => {
    * loginUser
    * Authenticates user credentials with backend and sets up the session.
    */
-  const loginUser = async (credentials) => {
+  const loginUser = async (credentials, rememberMe = true) => {
     try {
       const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/login`, credentials);
-      localStorage.setItem('token', res.data.token);
-      localStorage.setItem('user', JSON.stringify(res.data.user));
+      const storage = rememberMe ? localStorage : sessionStorage;
+      
+      // Clear the other storage to prevent conflicts
+      if (rememberMe) {
+        sessionStorage.removeItem('token');
+        sessionStorage.removeItem('user');
+      } else {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+      }
+
+      storage.setItem('token', res.data.token);
+      storage.setItem('user', JSON.stringify(res.data.user));
+      
       axios.defaults.headers.common['x-auth-token'] = res.data.token;
       setUser(res.data.user);
       navigate('/');
@@ -70,6 +82,25 @@ export const AuthProvider = ({ children }) => {
   };
 
   /**
+   * googleLogin
+   * Authenticates user using Google credential token.
+   */
+  const googleLogin = async (credential) => {
+    try {
+      const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/google`, { credential });
+      localStorage.setItem('token', res.data.token);
+      localStorage.setItem('user', JSON.stringify(res.data.user));
+      axios.defaults.headers.common['x-auth-token'] = res.data.token;
+      setUser(res.data.user);
+      navigate('/');
+      return { success: true };
+    } catch (error) {
+      console.error(error);
+      return { success: false, message: error.response?.data?.msg || 'Google Login failed' };
+    }
+  };
+
+  /**
    * logout
    * Clears the user session from local storage, removes the axios auth header,
    * resets state, and redirects to the login page.
@@ -77,6 +108,8 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
+    sessionStorage.removeItem('token');
+    sessionStorage.removeItem('user');
     delete axios.defaults.headers.common['x-auth-token'];
     setUser(null);
     navigate('/login');
@@ -88,11 +121,15 @@ export const AuthProvider = ({ children }) => {
    */
   const updateUserSession = (updatedUser) => {
     setUser(updatedUser);
-    localStorage.setItem('user', JSON.stringify(updatedUser));
+    if (localStorage.getItem('token')) {
+      localStorage.setItem('user', JSON.stringify(updatedUser));
+    } else if (sessionStorage.getItem('token')) {
+      sessionStorage.setItem('user', JSON.stringify(updatedUser));
+    }
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, registerUser, loginUser, logout, updateUserSession }}>
+    <AuthContext.Provider value={{ user, loading, registerUser, loginUser, googleLogin, logout, updateUserSession }}>
       {children}
     </AuthContext.Provider>
   );

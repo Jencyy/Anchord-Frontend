@@ -39,7 +39,7 @@ const Onboarding = () => {
   useEffect(() => {
     const checkAnchors = async () => {
       try {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('token') || sessionStorage.getItem('token');
         const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/anchors`, {
           headers: { 'x-auth-token': token },
         });
@@ -76,7 +76,7 @@ const Onboarding = () => {
     setParseError('');
 
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('token') || sessionStorage.getItem('token');
       const res = await axios.post(
         `${import.meta.env.VITE_API_URL}/api/ai/parse-schedule`,
         { text: aiText, lifeStage: user?.lifeStage },

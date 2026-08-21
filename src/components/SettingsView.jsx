@@ -32,7 +32,7 @@ const SettingsView = () => {
     setMessage({ type: '', text: '' });
     
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('token') || sessionStorage.getItem('token');
       const payload = { ...formData };
       if (!payload.password) delete payload.password;
       

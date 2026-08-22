@@ -47,6 +47,16 @@ const Dashboard = () => {
     fetchAnchors();
   }, []);
 
+  useEffect(() => {
+    // Apply OLED mode globally based on user preferences
+    document.documentElement.classList.add('dark');
+    if (user?.preferences?.oledMode === 'Pure') {
+      document.documentElement.classList.add('oled-mode');
+    } else {
+      document.documentElement.classList.remove('oled-mode');
+    }
+  }, [user]);
+
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex flex-col items-center justify-center gap-4">
@@ -63,6 +73,8 @@ const Dashboard = () => {
         logout={logout}
         filter={filter}
         setFilter={setFilter}
+        habits={habits}
+        anchors={anchors}
       />
       <Outlet context={{
         user,

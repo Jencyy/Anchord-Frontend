@@ -19,6 +19,7 @@ import HabitsLayout from './pages/HabitsLayout';
 import HabitsView from './pages/HabitsView';
 import ScheduleView from './pages/ScheduleView';
 import SettingsView from './components/SettingsView';
+import AnalyticsView from './pages/AnalyticsView';
 
 /**
  * App Component
@@ -44,10 +45,11 @@ function App() {
           <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>}>
             <Route element={<HabitsLayout />}>
               <Route index element={<HabitsView />} />
-              <Route path="add-habit" element={<AddHabit />} />
             </Route>
+            <Route path="add-habit" element={<AddHabit />} />
             <Route path="schedule" element={<ScheduleView />} />
             <Route path="settings" element={<SettingsView />} />
+            <Route path="analytics" element={<AnalyticsView />} />
           </Route>
         </Routes>
       </AuthProvider>

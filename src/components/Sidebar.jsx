@@ -41,7 +41,7 @@ const UserIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>
 );
 
-const Sidebar = ({ user, logout, filter, setFilter }) => {
+const Sidebar = ({ user, logout, filter, setFilter, habits = [], anchors = [] }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [isDark, setIsDark] = useState(false);
@@ -62,11 +62,24 @@ const Sidebar = ({ user, logout, filter, setFilter }) => {
     }
   };
 
-  const isHabits = location.pathname === '/' || location.pathname === '/add-habit';
+  const isHabits = location.pathname === '/';
+
+  // Calculate dynamic habit counts for each routine type
+  const getRoutineCount = (dayType) => {
+    const routineAnchors = anchors.filter(a => a.day_type === dayType);
+    return habits.filter(h => {
+      const anchorId = h.anchorId?._id || h.anchorId;
+      return routineAnchors.some(a => a._id === anchorId);
+    }).length;
+  };
+
+  const workDayCount = getRoutineCount('weekday');
+  const dayOffCount = getRoutineCount('day_off');
+  const customCount = getRoutineCount('custom');
 
   return (
     <>
-      <aside className="hidden lg:flex w-64 xl:w-[280px] border-r border-border bg-[#101014] h-full flex-col py-6 overflow-y-auto shrink-0 z-10 dark:bg-[#101014] bg-[#fdfdfd]">
+      <aside className="hidden lg:flex w-64 xl:w-[280px] border-r border-border bg-sidebar h-full flex-col py-6 overflow-y-auto shrink-0 z-10">
         {/* LOGO */}
         <div className="px-8 mb-10 flex items-center gap-3 cursor-pointer" onClick={() => navigate('/')}>
           <div className="bg-[#f2a154] p-1.5 rounded-lg flex items-center justify-center">
@@ -99,8 +112,8 @@ const Sidebar = ({ user, logout, filter, setFilter }) => {
             Add Habit
           </button>
           <button
-            onClick={() => {}}
-            className={`w-full flex items-center gap-4 px-4 py-3 rounded-xl text-sm font-semibold transition-colors text-muted-foreground hover:bg-black/5 dark:hover:bg-white/5`}
+            onClick={() => navigate('/analytics')}
+            className={`w-full flex items-center gap-4 px-4 py-3 rounded-xl text-sm font-semibold transition-colors ${location.pathname === '/analytics' ? 'bg-[#2a2420] text-[#e89454] dark:bg-[#2a2420]' : 'text-muted-foreground hover:bg-black/5 dark:hover:bg-white/5'}`}
           >
             <BarChartIcon />
             Analytics
@@ -124,7 +137,7 @@ const Sidebar = ({ user, logout, filter, setFilter }) => {
                  <div className={`w-1.5 h-1.5 rounded-full ${filter === 'weekday' && isHabits ? 'bg-[#e89454]' : 'bg-muted-foreground/40'}`} />
                  Work Day Routine
               </div>
-              <span className="bg-black/5 dark:bg-white/10 text-muted-foreground text-xs font-bold px-2 py-0.5 rounded-md">6</span>
+              <span className="bg-black/5 dark:bg-white/10 text-muted-foreground text-xs font-bold px-2 py-0.5 rounded-md">{workDayCount}</span>
             </button>
             <button
               onClick={() => { setFilter('day_off'); navigate('/'); }}
@@ -134,16 +147,17 @@ const Sidebar = ({ user, logout, filter, setFilter }) => {
                  <div className={`w-1.5 h-1.5 rounded-full ${filter === 'day_off' && isHabits ? 'bg-[#e89454]' : 'bg-muted-foreground/40'}`} />
                  Day Off Routine
               </div>
-              <span className="bg-black/5 dark:bg-white/10 text-muted-foreground text-xs font-bold px-2 py-0.5 rounded-md">4</span>
+              <span className="bg-black/5 dark:bg-white/10 text-muted-foreground text-xs font-bold px-2 py-0.5 rounded-md">{dayOffCount}</span>
             </button>
             <button
-              className={`w-full flex items-center justify-between px-4 py-2.5 rounded-xl text-sm font-semibold transition-colors text-muted-foreground hover:bg-black/5 dark:hover:bg-white/5`}
+              onClick={() => { setFilter('custom'); navigate('/'); }}
+              className={`w-full flex items-center justify-between px-4 py-2.5 rounded-xl text-sm font-semibold transition-colors ${filter === 'custom' && isHabits ? 'bg-black/5 dark:bg-white/5 text-foreground' : 'text-muted-foreground hover:bg-black/5 dark:hover:bg-white/5'}`}
             >
               <div className="flex items-center gap-3">
-                 <div className="w-1.5 h-1.5 rounded-full bg-muted-foreground/40" />
+                 <div className={`w-1.5 h-1.5 rounded-full ${filter === 'custom' && isHabits ? 'bg-[#e89454]' : 'bg-muted-foreground/40'}`} />
                  Custom Routine
               </div>
-              <span className="bg-black/5 dark:bg-white/10 text-muted-foreground text-xs font-bold px-2 py-0.5 rounded-md">2</span>
+              <span className="bg-black/5 dark:bg-white/10 text-muted-foreground text-xs font-bold px-2 py-0.5 rounded-md">{customCount}</span>
             </button>
           </div>
         </nav>

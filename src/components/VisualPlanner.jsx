@@ -96,22 +96,22 @@ const VisualPlanner = ({ anchors = [], habits = [], filter = 'weekday' }) => {
       {/* Legend & Title */}
       <div className="max-w-5xl mx-auto flex flex-col lg:flex-row lg:items-end justify-between mb-12 gap-6">
         <div>
-          <p className="text-[#e89454] text-xs font-bold uppercase tracking-widest mb-2">Visual Planner</p>
+          <p className="text-primary text-xs font-bold uppercase tracking-widest mb-2">Visual Planner</p>
           <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-2">Your Schedule</h2>
           <p className="text-muted-foreground text-sm">Find gaps in your real day to dock new habits naturally.</p>
         </div>
         
-        <div className="flex items-center gap-6 bg-[#18181b] border border-border px-5 py-3 rounded-xl shadow-sm">
+        <div className="flex items-center gap-6 bg-surface border border-border px-5 py-3 rounded-xl shadow-sm">
           <div className="flex items-center gap-2">
             <div className="w-3.5 h-3.5 rounded bg-muted-foreground/30 shadow-sm"></div>
             <span className="text-xs font-semibold text-muted-foreground">Busy Blocks</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-3.5 h-3.5 rounded border border-dashed border-[#e89454] bg-transparent"></div>
+            <div className="w-3.5 h-3.5 rounded border border-dashed border-primary bg-transparent"></div>
             <span className="text-xs font-semibold text-muted-foreground">Free Gaps</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-3.5 h-3.5 rounded bg-[#e89454]"></div>
+            <div className="w-3.5 h-3.5 rounded bg-primary"></div>
             <span className="text-xs font-semibold text-muted-foreground">Anchored Habits</span>
           </div>
         </div>
@@ -134,7 +134,7 @@ const VisualPlanner = ({ anchors = [], habits = [], filter = 'weekday' }) => {
                   <div className="w-20 shrink-0 flex items-center md:items-start pt-4 justify-end">
                     <span className="text-xs font-bold text-muted-foreground">{formatTime(block.time_start)}</span>
                   </div>
-                  <div className="flex-1 bg-[#25252d] border border-transparent rounded-xl p-4 px-5 flex items-center shadow-sm">
+                  <div className="flex-1 bg-secondary border border-transparent rounded-xl p-4 px-5 flex items-center shadow-sm">
                     <div className="w-1 h-5 bg-muted-foreground/30 rounded-full mr-4 shrink-0"></div>
                     <div className="flex-1 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                       <span className="font-bold text-sm text-foreground/90">{block.label}</span>
@@ -150,15 +150,15 @@ const VisualPlanner = ({ anchors = [], habits = [], filter = 'weekday' }) => {
               return (
                 <div key={block._id} className="flex flex-col md:flex-row md:items-stretch gap-4 md:gap-8 group">
                   <div className="w-20 shrink-0 flex items-center md:items-start pt-4 justify-end">
-                    <span className="text-xs font-bold text-[#e89454]">{formatTime(block.time_start)}</span>
+                    <span className="text-xs font-bold text-primary">{formatTime(block.time_start)}</span>
                   </div>
-                  <div className="flex-1 bg-surface border border-[#e89454]/30 rounded-xl p-4 px-5 shadow-sm relative overflow-hidden">
+                  <div className="flex-1 bg-surface border border-primary/30 rounded-xl p-4 px-5 shadow-sm relative overflow-hidden">
                     {/* Tiny colored dot at top left like in mockup */}
-                    <div className="absolute top-5 left-4 w-1 h-1 rounded-full bg-[#e89454]"></div>
+                    <div className="absolute top-5 left-4 w-1 h-1 rounded-full bg-primary"></div>
                     
                     <div className="flex-1 flex flex-col sm:flex-row sm:items-center justify-between gap-4 ml-3">
                       <div className="flex flex-col">
-                        <span className="font-bold text-xs tracking-wider text-[#e89454] uppercase">{block.label} (ANCHOR SLOT)</span>
+                        <span className="font-bold text-xs tracking-wider text-primary uppercase">{block.label} (ANCHOR SLOT)</span>
                       </div>
                       <span className="text-xs font-bold text-muted-foreground/60">{formatTime(block.time_start)} – {formatTime(block.time_end)}</span>
                     </div>
@@ -166,7 +166,7 @@ const VisualPlanner = ({ anchors = [], habits = [], filter = 'weekday' }) => {
                     {/* Habit Pills */}
                     <div className="flex flex-wrap gap-2 mt-4 ml-3">
                       {block.habits.map(habit => (
-                        <div key={habit._id} className="bg-[#e89454] text-[#18181b] text-xs font-bold px-3 py-1.5 rounded-lg flex items-center gap-1.5 shadow-sm">
+                        <div key={habit._id} className="bg-primary text-primary-foreground text-xs font-bold px-3 py-1.5 rounded-lg flex items-center gap-1.5 shadow-sm">
                           {habit.name}
                           <div className="flex items-center gap-0.5 opacity-90 ml-1">
                             <CheckIcon /> <span className="font-bold tracking-tight text-[10px]">fits</span>
@@ -184,12 +184,12 @@ const VisualPlanner = ({ anchors = [], habits = [], filter = 'weekday' }) => {
               return (
                 <div key={block._id} className="flex flex-col md:flex-row md:items-stretch gap-4 md:gap-8 group">
                   <div className="w-20 shrink-0 flex items-center md:items-start pt-4 justify-end">
-                    <span className="text-xs font-bold text-[#e89454]">{formatTime(block.time_start)}</span>
+                    <span className="text-xs font-bold text-primary">{formatTime(block.time_start)}</span>
                   </div>
-                  <div className="flex-1 border border-dashed border-[#e89454]/40 bg-transparent rounded-xl p-4 px-5 relative overflow-hidden flex flex-col justify-center">
+                  <div className="flex-1 border border-dashed border-primary/40 bg-transparent rounded-xl p-4 px-5 relative overflow-hidden flex flex-col justify-center">
                     <div className="flex-1 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                      <span className="font-bold text-[11px] tracking-wider text-[#e89454] uppercase">{block.label}</span>
-                      <span className="text-[11px] font-semibold text-[#e89454]/60 hidden sm:block">Perfect time to slot learning habits</span>
+                      <span className="font-bold text-[11px] tracking-wider text-primary uppercase">{block.label}</span>
+                      <span className="text-[11px] font-semibold text-primary/60 hidden sm:block">Perfect time to slot learning habits</span>
                     </div>
                   </div>
                 </div>

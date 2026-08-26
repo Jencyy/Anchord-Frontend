@@ -111,7 +111,7 @@ const HabitDetails = ({ habit, habitLogs = [], anchors = [], setSelectedHabit })
       {/* Behavioral Bridge */}
       <div className="mb-8">
         <p className="text-[11px] font-extrabold text-muted-foreground uppercase tracking-widest mb-3">Behavioral Bridge</p>
-        <div className="bg-[#18181b] dark:bg-[#18181b] bg-white border border-border/10 p-5 rounded-2xl shadow-sm">
+        <div className="bg-surface border border-border/10 p-5 rounded-2xl shadow-sm">
           <p className="text-foreground text-[15px] font-medium leading-relaxed">
             After I complete <span className="font-bold text-[#e89454]">{anchorLabel}</span>, I will <span className="font-bold">{habit.name}</span>.
           </p>
@@ -121,7 +121,7 @@ const HabitDetails = ({ habit, habitLogs = [], anchors = [], setSelectedHabit })
       {/* Motif */}
       <div className="mb-8">
         <p className="text-[11px] font-extrabold text-muted-foreground uppercase tracking-widest mb-3">Motif</p>
-        <div className="bg-[#18181b] dark:bg-[#18181b] bg-white border border-border/10 p-5 rounded-2xl shadow-sm">
+        <div className="bg-surface border border-border/10 p-5 rounded-2xl shadow-sm">
           <p className="text-foreground text-[15px] font-medium flex items-center gap-2">
             {habit.strategy || "🧘‍♂️ Mindfulness"}
           </p>
@@ -130,11 +130,11 @@ const HabitDetails = ({ habit, habitLogs = [], anchors = [], setSelectedHabit })
 
       {/* Streaks */}
       <div className="grid grid-cols-2 gap-4 mb-8">
-        <div className="bg-[#18181b] dark:bg-[#18181b] bg-white border border-border/10 p-5 rounded-2xl shadow-sm text-center">
+        <div className="bg-surface border border-border/10 p-5 rounded-2xl shadow-sm text-center">
           <p className="text-[11px] font-extrabold text-muted-foreground uppercase tracking-widest mb-2">Current Streak</p>
           <p className="text-3xl font-black text-foreground">{currentStreak} <span className="text-lg font-bold text-muted-foreground">Days</span></p>
         </div>
-        <div className="bg-[#18181b] dark:bg-[#18181b] bg-white border border-border/10 p-5 rounded-2xl shadow-sm text-center">
+        <div className="bg-surface border border-border/10 p-5 rounded-2xl shadow-sm text-center">
           <p className="text-[11px] font-extrabold text-muted-foreground uppercase tracking-widest mb-2">Longest Streak</p>
           <p className="text-3xl font-black text-foreground">{maxStreak} <span className="text-lg font-bold text-muted-foreground">Days</span></p>
         </div>
@@ -143,7 +143,7 @@ const HabitDetails = ({ habit, habitLogs = [], anchors = [], setSelectedHabit })
       {/* Calendar Flow */}
       <div>
         <p className="text-[11px] font-extrabold text-muted-foreground uppercase tracking-widest mb-3">Current Month Flow</p>
-        <div className="bg-[#18181b] dark:bg-[#18181b] bg-white border border-border/10 p-5 rounded-2xl shadow-sm">
+        <div className="bg-surface border border-border/10 p-5 rounded-2xl shadow-sm">
           <div className="grid grid-cols-7 gap-2 text-center">
             {calendarDays.map((day, i) => {
               let bg = 'bg-black/5 dark:bg-white/5';

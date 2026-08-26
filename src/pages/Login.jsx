@@ -55,16 +55,16 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex w-full font-sans bg-white dark:bg-[#101014] selection:bg-[#e89454] selection:text-white">
+    <div className="min-h-screen flex w-full font-sans bg-white dark:bg-[#101014] selection:bg-primary selection:text-white">
       
       {/* LEFT PANEL */}
       {/* Warm beige background in light mode #FDF7F1 */}
-      <div className="hidden lg:flex w-1/2 bg-[#FDF7F1] dark:bg-[#161311] flex-col justify-between p-12 lg:p-16 xl:p-20 relative overflow-hidden">
+      <div className="hidden lg:flex w-1/2 bg-gradient-to-br from-[#FEF0E6] to-[#FFF9F4] dark:from-[#161311] dark:to-[#100D0B] flex-col justify-between p-12 lg:p-16 xl:p-20 relative overflow-hidden">
         
         {/* Top Logo Section */}
         <div className="relative z-10">
           <div className="flex items-center gap-3 cursor-pointer">
-            <div className="bg-[#e89454] p-2 rounded-xl flex items-center justify-center shadow-sm">
+            <div className="bg-primary p-2 rounded-xl flex items-center justify-center shadow-sm">
                <AnchorIcon />
             </div>
             <span className="font-extrabold text-2xl text-gray-900 dark:text-white tracking-tight">Anchord</span>
@@ -76,7 +76,7 @@ const Login = () => {
           {/* Mock UI Graphic */}
           <div className="bg-white dark:bg-[#1c1a1a] rounded-[24px] p-6 border border-gray-100 dark:border-white/5 w-full mb-12 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-2xl">
             <div className="flex justify-between items-center mb-5">
-              <span className="text-[#e89454] text-[11px] font-bold uppercase tracking-wide">Morning Block</span>
+              <span className="text-primary text-[11px] font-bold uppercase tracking-wide">Morning Block</span>
               <span className="text-gray-300 dark:text-white/30 text-[11px] font-semibold tracking-wide">07:00 AM — 11:00 AM</span>
             </div>
             
@@ -87,12 +87,12 @@ const Login = () => {
             </div>
 
             {/* Row 2: Anchored Habit (Dashed Orange) */}
-            <div className="bg-[#FFF8F3] dark:bg-[#1c1a1a] rounded-xl p-3.5 border border-dashed border-[#e89454]/50 flex items-center justify-between">
+            <div className="bg-[#FFF8F3] dark:bg-[#1c1a1a] rounded-xl p-3.5 border border-dashed border-primary/50 flex items-center justify-between">
               <div className="flex items-center gap-3.5">
-                <div className="w-[3px] h-[18px] bg-[#e89454] rounded-full"></div>
+                <div className="w-[3px] h-[18px] bg-primary rounded-full"></div>
                 <span className="text-gray-900 dark:text-white font-bold text-[13px]">Anchor: Read 10 Pages</span>
               </div>
-              <div className="bg-[#e89454] text-white text-[9px] font-bold px-2 py-1 rounded-[4px] uppercase tracking-wider">
+              <div className="bg-primary text-white text-[9px] font-bold px-2 py-1 rounded-[4px] uppercase tracking-wider">
                 Fits Here
               </div>
             </div>
@@ -110,7 +110,7 @@ const Login = () => {
 
         {/* Bottom Social Proof Section */}
         <div className="flex items-center gap-2 relative z-10">
-          <div className="w-1.5 h-1.5 rounded-full bg-[#e89454]"></div>
+          <div className="w-1.5 h-1.5 rounded-full bg-primary"></div>
           <span className="text-gray-400 dark:text-white/40 text-[12px] font-semibold tracking-wide">Trusted by over 40,000 mindful operators</span>
         </div>
       </div>
@@ -148,7 +148,7 @@ const Login = () => {
                   required
                   value={formData.email}
                   onChange={handleChange}
-                  className="w-full h-[46px] px-4 text-[14px] font-medium rounded-[8px] bg-[#F4F4F5] dark:bg-[#1c1a1a] border border-transparent text-gray-900 dark:text-white focus:outline-none focus:border-[#e89454] focus:ring-1 focus:ring-[#e89454] transition-all placeholder:text-gray-400 dark:placeholder:text-white/30"
+                  className="w-full h-[46px] px-4 text-[14px] font-medium rounded-[8px] bg-[#F4F4F5] dark:bg-[#1c1a1a] border border-transparent text-gray-900 dark:text-white focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all placeholder:text-gray-400 dark:placeholder:text-white/30"
                 />
               </div>
 
@@ -164,7 +164,7 @@ const Login = () => {
                     required
                     value={formData.password}
                     onChange={handleChange}
-                    className="w-full h-[46px] px-4 pr-12 text-[14px] font-medium rounded-[8px] bg-[#F4F4F5] dark:bg-[#1c1a1a] border border-transparent text-gray-900 dark:text-white focus:outline-none focus:border-[#e89454] focus:ring-1 focus:ring-[#e89454] transition-all placeholder:text-gray-400 dark:placeholder:text-white/30 tracking-[0.2em]"
+                    className="w-full h-[46px] px-4 pr-12 text-[14px] font-medium rounded-[8px] bg-[#F4F4F5] dark:bg-[#1c1a1a] border border-transparent text-gray-900 dark:text-white focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all placeholder:text-gray-400 dark:placeholder:text-white/30 tracking-[0.2em]"
                   />
                   <button 
                     type="button" 
@@ -186,14 +186,14 @@ const Login = () => {
                   setRememberMe(!rememberMe);
                 }}
               >
-                <div className={`w-[14px] h-[14px] rounded-[3px] flex items-center justify-center transition-colors ${rememberMe ? 'bg-[#e89454]' : 'bg-[#F4F4F5] dark:bg-[#1c1a1a] border border-gray-200 dark:border-white/10 group-hover:border-[#e89454]/50'}`}>
+                <div className={`w-[14px] h-[14px] rounded-[3px] flex items-center justify-center transition-colors ${rememberMe ? 'bg-primary' : 'bg-[#F4F4F5] dark:bg-[#1c1a1a] border border-gray-200 dark:border-white/10 group-hover:border-primary/50'}`}>
                    {rememberMe && (
                      <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" className="text-white"><polyline points="20 6 9 17 4 12"/></svg>
                    )}
                 </div>
                 <span className="text-[12px] font-medium text-gray-500 dark:text-white/50 group-hover:text-gray-700 dark:group-hover:text-white/70 transition-colors">Remember me</span>
               </label>
-              <Link to="/forgot-password" className="text-[12px] font-medium text-[#e89454] hover:text-[#d68549] transition-all">
+              <Link to="/forgot-password" className="text-[12px] font-medium text-primary hover:text-primary-hover transition-all">
                 Forgot Password?
               </Link>
             </div>
@@ -202,7 +202,7 @@ const Login = () => {
             <div className="pt-2">
               <button
                 type="submit"
-                className="w-full h-[46px] bg-[#e89454] hover:bg-[#d68549] text-white text-[14px] font-bold rounded-[8px] transition-all active:scale-[0.99]"
+                className="w-full h-[46px] bg-primary hover:bg-primary-hover text-white text-[14px] font-bold rounded-[8px] transition-all active:scale-[0.99]"
                 disabled={loading}
               >
                 {loading ? 'Logging in...' : 'Log In'}
@@ -241,7 +241,7 @@ const Login = () => {
             {/* Footer Link */}
             <p className="text-[12px] text-center text-gray-500 dark:text-white/50 font-medium pt-4">
               Don't have an account?{' '}
-              <Link to="/register" className="text-[#e89454] hover:text-[#d68549] hover:underline transition-colors ml-1 font-semibold">
+              <Link to="/register" className="text-primary hover:text-primary-hover hover:underline transition-colors ml-1 font-semibold">
                 Sign Up
               </Link>
             </p>

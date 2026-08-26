@@ -9,60 +9,44 @@
 
 @layer base {
   :root {
-    /* User specified colors */
-    --background: 210 40% 98%;
-    /* #F8FAFC */
+    /* Anchord Light Theme */
+    --background: 0 0% 100%;
     --surface: 0 0% 100%;
-    /* #FFFFFF */
     --foreground: 222.2 47.4% 11.2%;
-    /* #0F172A Text */
     --text-light: 215.4 16.3% 46.9%;
-    /* #64748B */
 
     --card: 0 0% 100%;
-    /* #FFFFFF Surface */
     --card-foreground: 222.2 47.4% 11.2%;
-    /* #0F172A */
 
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 47.4% 11.2%;
 
-    --primary: 221.2 83.2% 53.3%;
-    /* #2563EB Primary */
+    /* Anchord Orange matching the dark theme */
+    --primary: 28 90% 58%;
     --primary-foreground: 0 0% 100%;
-    --primary-hover: 221.2 76% 48%;
-    /* #1D4ED8 Primary Hover */
+    --primary-hover: 28 90% 53%;
 
-    --secondary: 173.4 80.4% 40%;
-    /* #14B8A6 Secondary */
-    --secondary-foreground: 0 0% 100%;
+    --secondary: 0 0% 96%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
 
-    --muted: 210 40% 96.1%;
+    --muted: 0 0% 96%;
     --muted-foreground: 215.4 16.3% 46.9%;
 
-    --accent: 258.3 89.5% 66%;
-    /* #8B5CF6 Accent */
+    --accent: 28 90% 58%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84.2% 60.2%;
-    /* #EF4444 Error */
     --destructive-foreground: 0 0% 100%;
 
     --success: 142.1 70.6% 45.3%;
-    /* #22C55E */
     --warning: 37.7 92.1% 50.2%;
-    /* #F59E0B */
     --error: 0 84.2% 60.2%;
-    /* #EF4444 */
     --info: 199.4 89% 48%;
-    /* #0EA5E9 */
 
     --border: 214.3 31.8% 91.4%;
-    /* #E2E8F0 */
     --input: 214.3 31.8% 91.4%;
-    --ring: 221.2 83.2% 53.3%;
-    --sidebar: 210 40% 96.1%;
-    /* #F1F5F9 */
+    --ring: 28 90% 58%;
+    --sidebar: 0 0% 100%;
 
     --radius: 0.75rem;
   }

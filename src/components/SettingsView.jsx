@@ -29,15 +29,7 @@ const SettingsView = () => {
   const [showPasswordInput, setShowPasswordInput] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
 
-  // Make sure we apply OLED mode on initial mount if saved in preferences
-  useEffect(() => {
-    document.documentElement.classList.add('dark');
-    if (user?.preferences?.oledMode === 'Pure') {
-      document.documentElement.classList.add('oled-mode');
-    } else {
-      document.documentElement.classList.remove('oled-mode');
-    }
-  }, [user]);
+
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -73,9 +65,12 @@ const SettingsView = () => {
       if (updateUserSession) updateUserSession(res.data);
       setMessage({ type: 'success', text: 'Settings and preferences saved successfully!' });
       
-      if (formData.oledMode === 'Pure') {
-        document.documentElement.classList.add('oled-mode');
+      if (formData.oledMode === 'Warm') {
+        document.documentElement.classList.remove('dark', 'oled-mode');
+      } else if (formData.oledMode === 'Pure') {
+        document.documentElement.classList.add('dark', 'oled-mode');
       } else {
+        document.documentElement.classList.add('dark');
         document.documentElement.classList.remove('oled-mode');
       }
 
@@ -153,7 +148,7 @@ const SettingsView = () => {
         
         {/* Header */}
         <div>
-          <p className="text-[11px] font-extrabold text-[#e89454] tracking-widest uppercase mb-2">CONTROL ROOM</p>
+          <p className="text-[11px] font-extrabold text-primary tracking-widest uppercase mb-2">CONTROL ROOM</p>
           <h1 className="text-4xl font-extrabold text-foreground tracking-tight mb-2">System Settings</h1>
           <p className="text-[14px] text-muted-foreground font-medium">Configure your habits profiles, stage, notifications, and local security.</p>
         </div>
@@ -320,7 +315,7 @@ const SettingsView = () => {
           <button
              onClick={handleSave}
              disabled={isSaving}
-             className="h-12 px-10 rounded-xl font-extrabold bg-[#e89454] hover:bg-[#d68549] text-white transition-all disabled:opacity-50 shadow-sm text-[14px]"
+             className="h-12 px-10 rounded-xl font-extrabold bg-primary hover:bg-primary-hover text-primary-foreground transition-all disabled:opacity-50 shadow-sm text-[14px]"
           >
              {isSaving ? 'Saving...' : 'Save All Changes'}
           </button>

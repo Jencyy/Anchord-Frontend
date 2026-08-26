@@ -48,14 +48,16 @@ const Dashboard = () => {
   }, []);
 
   useEffect(() => {
-    // Apply OLED mode globally based on user preferences
-    document.documentElement.classList.add('dark');
-    if (user?.preferences?.oledMode === 'Pure') {
-      document.documentElement.classList.add('oled-mode');
+    // Apply OLED mode globally based on user preferences on initial load
+    if (user?.preferences?.oledMode === 'Warm') {
+      document.documentElement.classList.remove('dark', 'oled-mode');
+    } else if (user?.preferences?.oledMode === 'Pure') {
+      document.documentElement.classList.add('dark', 'oled-mode');
     } else {
+      document.documentElement.classList.add('dark');
       document.documentElement.classList.remove('oled-mode');
     }
-  }, [user]);
+  }, [user?.preferences?.oledMode]);
 
   if (loading) {
     return (

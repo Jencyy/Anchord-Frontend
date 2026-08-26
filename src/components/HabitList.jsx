@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import confetti from 'canvas-confetti';
 
 const AnchorIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-[#e89454]"><circle cx="12" cy="5" r="3"/><line x1="12" y1="22" x2="12" y2="8"/><path d="M5 12H2a10 10 0 0 0 20 0h-3"/></svg>
+  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-primary"><circle cx="12" cy="5" r="3"/><line x1="12" y1="22" x2="12" y2="8"/><path d="M5 12H2a10 10 0 0 0 20 0h-3"/></svg>
 );
 
 const FireIconSmall = () => (
@@ -72,17 +72,17 @@ const HabitItem = ({ habit, isSelected, onSelect, todayLog, onLogToggle, yesterd
     >
       <div className="flex items-center gap-4">
         {/* Left vertical indicator pill */}
-        <div className={`w-1 h-6 rounded-full transition-colors ${isSelected || isCompleted ? 'bg-[#e89454]' : 'bg-border group-hover:bg-[#e89454]/50'}`} />
+        <div className={`w-1 h-6 rounded-full transition-colors ${isSelected || isCompleted ? 'bg-primary' : 'bg-border group-hover:bg-primary/50'}`} />
         <button
           onClick={(e) => {
             e.stopPropagation(); 
             onLogToggle(habit._id, isCompleted ? 'skipped' : 'completed');
           }}
           className={`h-6 w-6 rounded-md flex items-center justify-center shrink-0 border-2 transition-all ${isCompleted
-              ? 'bg-[#e89454] border-[#e89454] text-white shadow-sm'
+              ? 'bg-primary border-primary text-white shadow-sm'
               : isDisrupted
                 ? 'bg-amber-500 border-amber-500 text-white'
-                : 'border-border text-transparent hover:border-[#e89454]/50 hover:text-[#e89454]/20'
+                : 'border-border text-transparent hover:border-primary/50 hover:text-primary/20'
             }`}
         >
           {isDisrupted ? (
@@ -98,7 +98,7 @@ const HabitItem = ({ habit, isSelected, onSelect, todayLog, onLogToggle, yesterd
       </div>
       
       <div className="flex items-center gap-2">
-        <div className="flex items-center gap-1.5 px-2.5 py-1 bg-background border border-border rounded-md text-[#e89454] transition-colors shadow-sm">
+        <div className="flex items-center gap-1.5 px-2.5 py-1 bg-background border border-border rounded-md text-primary transition-colors shadow-sm">
           <FireIconSmall />
           <span className="text-xs font-bold text-foreground">{streak}d</span>
         </div>
@@ -187,21 +187,21 @@ const HabitList = ({ filter, habits, anchors, habitLogs, setHabitLogs, selectedH
       {dayMode === 'normal' && (
         <>
           <div className="mb-6 mt-6 lg:mt-0 animate-in fade-in slide-in-from-top-4">
-            <p className="text-[11px] font-extrabold text-[#e89454] tracking-widest uppercase mb-2">TODAY • {formattedDate}</p>
+            <p className="text-[11px] font-extrabold text-primary tracking-widest uppercase mb-2">TODAY • {formattedDate}</p>
             <h1 className="text-3xl font-extrabold text-foreground tracking-tight mb-2">Good morning, {user?.name?.split(' ')[0] || 'Alex'}</h1>
             <p className="text-[14px] text-muted-foreground font-medium">{remainingHabits} habits remaining to lock in today's anchors.</p>
           </div>
           
           <div className="mb-10 p-4 border border-border bg-surface rounded-2xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4 animate-in fade-in slide-in-from-bottom-4">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-[#e89454]/10 rounded-full text-[#e89454]"><WarningIcon /></div>
+              <div className="p-2 bg-primary/10 rounded-full text-primary"><WarningIcon /></div>
               <div>
                 <h4 className="font-bold text-[14px] text-foreground">Routine broken today?</h4>
                 <p className="text-[12px] font-medium text-muted-foreground mt-0.5">Today's different. Here are your minimum versions — do what you can.</p>
               </div>
             </div>
             <div className="flex items-center gap-2 w-full md:w-auto">
-              <button onClick={() => setDayMode('lazy')} className="flex-1 md:flex-none px-4 py-2 bg-[#e89454]/10 hover:bg-[#e89454]/20 text-[#e89454] rounded-lg text-[13px] font-bold transition-colors">Minimum Habits</button>
+              <button onClick={() => setDayMode('lazy')} className="flex-1 md:flex-none px-4 py-2 bg-primary/10 hover:bg-primary/20 text-primary rounded-lg text-[13px] font-bold transition-colors">Minimum Habits</button>
               <button onClick={() => setDayMode('skip')} className="flex-1 md:flex-none px-4 py-2 border border-border hover:bg-black/5 rounded-lg text-[13px] font-bold text-foreground transition-colors">Skip Today</button>
             </div>
           </div>
@@ -211,13 +211,13 @@ const HabitList = ({ filter, habits, anchors, habitLogs, setHabitLogs, selectedH
       {dayMode === 'lazy' && (
         <div className="mb-10 mt-6 lg:mt-0 animate-in fade-in slide-in-from-top-4">
           <div className="mb-6 p-3 border border-border bg-surface rounded-xl flex items-center gap-3 text-sm shadow-sm">
-            <div className="w-2.5 h-2.5 rounded-full bg-[#e89454]"></div>
+            <div className="w-2.5 h-2.5 rounded-full bg-primary"></div>
             <span className="font-bold text-foreground text-[13px]">Disrupted Day Mode Active</span>
             <span className="text-muted-foreground text-[13px] hidden md:inline">· Today's different. Here are your minimum versions — do what you can.</span>
-            <button onClick={() => setDayMode('normal')} className="ml-auto text-[12px] font-extrabold text-[#e89454] hover:underline uppercase tracking-wider">Exit</button>
+            <button onClick={() => setDayMode('normal')} className="ml-auto text-[12px] font-extrabold text-primary hover:underline uppercase tracking-wider">Exit</button>
           </div>
           
-          <p className="text-[11px] font-extrabold text-[#e89454] tracking-widest uppercase mb-2">TODAY • {formattedDate}</p>
+          <p className="text-[11px] font-extrabold text-primary tracking-widest uppercase mb-2">TODAY • {formattedDate}</p>
           <h1 className="text-3xl font-extrabold text-foreground tracking-tight mb-2">Lazy Day Mode</h1>
           <p className="text-[14px] font-medium text-muted-foreground">Streaks are anchored to your day, scaled down to protect consistency.</p>
         </div>
@@ -226,16 +226,16 @@ const HabitList = ({ filter, habits, anchors, habitLogs, setHabitLogs, selectedH
       {dayMode === 'skip' && (
         <div className="flex-1 flex flex-col items-center justify-center text-center animate-in zoom-in-95 duration-500">
           <div className="h-24 w-24 rounded-full border border-border bg-surface flex items-center justify-center mb-6 shadow-sm">
-            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#e89454" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" className="text-primary" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
           </div>
           <h1 className="text-3xl font-extrabold text-foreground tracking-tight mb-4">Taking a break today.</h1>
           <p className="text-[15px] font-medium text-muted-foreground max-w-md mx-auto leading-relaxed mb-8">
             Today is logged as Disrupted — not Missed. Your streaks are protected and will remain paused until tomorrow. Enjoy your day!
           </p>
           <div className="px-5 py-2.5 border border-border bg-surface rounded-xl text-[13px] font-bold text-foreground mb-8 shadow-sm flex items-center">
-            <span className="text-[#e89454] mr-2 text-lg leading-none">●</span> {formattedDate} marked as Disrupted
+            <span className="text-primary mr-2 text-lg leading-none">●</span> {formattedDate} marked as Disrupted
           </div>
-          <button onClick={() => setDayMode('normal')} className="px-8 py-3.5 bg-[#e89454] hover:bg-[#d68549] text-white rounded-xl font-bold shadow-sm transition-colors text-[14px]">
+          <button onClick={() => setDayMode('normal')} className="px-8 py-3.5 bg-primary hover:bg-primary-hover text-white rounded-xl font-bold shadow-sm transition-colors text-[14px]">
             Resume Tomorrow
           </button>
         </div>
@@ -274,7 +274,7 @@ const HabitList = ({ filter, habits, anchors, habitLogs, setHabitLogs, selectedH
               return (
                 <div key={anchor._id} className="mb-8">
                   <div className="flex items-center justify-between mb-3">
-                    <div className="flex items-center gap-2 text-[#e89454]">
+                    <div className="flex items-center gap-2 text-primary">
                       <AnchorIcon />
                       <span className="text-[11px] font-extrabold uppercase tracking-widest text-foreground">{anchor.label}</span>
                     </div>

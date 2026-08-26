@@ -82,8 +82,8 @@ const Sidebar = ({ user, logout, filter, setFilter, habits = [], anchors = [] })
       <aside className="hidden lg:flex w-64 xl:w-[280px] border-r border-border bg-sidebar h-full flex-col py-6 overflow-y-auto shrink-0 z-10">
         {/* LOGO */}
         <div className="px-8 mb-10 flex items-center gap-3 cursor-pointer" onClick={() => navigate('/')}>
-          <div className="bg-[#f2a154] p-1.5 rounded-lg flex items-center justify-center">
-             <img src="/Anchord-logo.png" alt="Anchord Logo" className="h-6 w-6 object-contain filter invert opacity-90" />
+          <div className="bg-primary p-1.5 rounded-lg flex items-center justify-center">
+             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>
           </div>
           <span className="font-extrabold text-xl text-foreground tracking-tight">Anchord</span>
         </div>
@@ -92,35 +92,35 @@ const Sidebar = ({ user, logout, filter, setFilter, habits = [], anchors = [] })
         <nav className="flex-1 px-4 space-y-1">
           <button
             onClick={() => { setFilter('all'); navigate('/'); }}
-            className={`w-full flex items-center gap-4 px-4 py-3 rounded-xl text-sm font-semibold transition-colors ${filter === 'all' && isHabits ? 'bg-[#2a2420] text-[#e89454] dark:bg-[#2a2420]' : 'text-muted-foreground hover:bg-black/5 dark:hover:bg-white/5'}`}
+            className={`w-full flex items-center gap-4 px-4 py-3 rounded-xl text-sm font-semibold transition-colors ${filter === 'all' && isHabits ? 'bg-primary/10 text-primary dark:bg-primary/10 dark:text-primary' : 'text-muted-foreground hover:bg-black/5 dark:hover:bg-white/5'}`}
           >
             <CalendarIcon />
             Today
           </button>
           <button
             onClick={() => navigate('/schedule')}
-            className={`w-full flex items-center gap-4 px-4 py-3 rounded-xl text-sm font-semibold transition-colors ${location.pathname === '/schedule' ? 'bg-[#2a2420] text-[#e89454] dark:bg-[#2a2420]' : 'text-muted-foreground hover:bg-black/5 dark:hover:bg-white/5'}`}
+            className={`w-full flex items-center gap-4 px-4 py-3 rounded-xl text-sm font-semibold transition-colors ${location.pathname === '/schedule' ? 'bg-primary/10 text-primary dark:bg-primary/10 dark:text-primary' : 'text-muted-foreground hover:bg-black/5 dark:hover:bg-white/5'}`}
           >
             <ClockIcon />
             Schedule
           </button>
           <button
             onClick={() => navigate('/add-habit')}
-            className={`w-full flex items-center gap-4 px-4 py-3 rounded-xl text-sm font-semibold transition-colors ${location.pathname === '/add-habit' ? 'bg-[#2a2420] text-[#e89454] dark:bg-[#2a2420]' : 'text-muted-foreground hover:bg-black/5 dark:hover:bg-white/5'}`}
+            className={`w-full flex items-center gap-4 px-4 py-3 rounded-xl text-sm font-semibold transition-colors ${location.pathname === '/add-habit' ? 'bg-primary/10 text-primary dark:bg-primary/10 dark:text-primary' : 'text-muted-foreground hover:bg-black/5 dark:hover:bg-white/5'}`}
           >
             <PlusCircleIcon />
             Add Habit
           </button>
           <button
             onClick={() => navigate('/analytics')}
-            className={`w-full flex items-center gap-4 px-4 py-3 rounded-xl text-sm font-semibold transition-colors ${location.pathname === '/analytics' ? 'bg-[#2a2420] text-[#e89454] dark:bg-[#2a2420]' : 'text-muted-foreground hover:bg-black/5 dark:hover:bg-white/5'}`}
+            className={`w-full flex items-center gap-4 px-4 py-3 rounded-xl text-sm font-semibold transition-colors ${location.pathname === '/analytics' ? 'bg-primary/10 text-primary dark:bg-primary/10 dark:text-primary' : 'text-muted-foreground hover:bg-black/5 dark:hover:bg-white/5'}`}
           >
             <BarChartIcon />
             Analytics
           </button>
           <button
             onClick={() => navigate('/settings')}
-            className={`w-full flex items-center gap-4 px-4 py-3 rounded-xl text-sm font-semibold transition-colors ${location.pathname === '/settings' ? 'bg-[#2a2420] text-[#e89454] dark:bg-[#2a2420]' : 'text-muted-foreground hover:bg-black/5 dark:hover:bg-white/5'}`}
+            className={`w-full flex items-center gap-4 px-4 py-3 rounded-xl text-sm font-semibold transition-colors ${location.pathname === '/settings' ? 'bg-primary/10 text-primary dark:bg-primary/10 dark:text-primary' : 'text-muted-foreground hover:bg-black/5 dark:hover:bg-white/5'}`}
           >
             <SettingsIcon />
             Settings
@@ -134,7 +134,7 @@ const Sidebar = ({ user, logout, filter, setFilter, habits = [], anchors = [] })
               className={`w-full flex items-center justify-between px-4 py-2.5 rounded-xl text-sm font-semibold transition-colors ${filter === 'weekday' && isHabits ? 'bg-black/5 dark:bg-white/5 text-foreground' : 'text-muted-foreground hover:bg-black/5 dark:hover:bg-white/5'}`}
             >
               <div className="flex items-center gap-3">
-                 <div className={`w-1.5 h-1.5 rounded-full ${filter === 'weekday' && isHabits ? 'bg-[#e89454]' : 'bg-muted-foreground/40'}`} />
+                 <div className={`w-1.5 h-1.5 rounded-full ${filter === 'weekday' && isHabits ? 'bg-primary' : 'bg-muted-foreground/40'}`} />
                  Work Day Routine
               </div>
               <span className="bg-black/5 dark:bg-white/10 text-muted-foreground text-xs font-bold px-2 py-0.5 rounded-md">{workDayCount}</span>
@@ -144,7 +144,7 @@ const Sidebar = ({ user, logout, filter, setFilter, habits = [], anchors = [] })
               className={`w-full flex items-center justify-between px-4 py-2.5 rounded-xl text-sm font-semibold transition-colors ${filter === 'day_off' && isHabits ? 'bg-black/5 dark:bg-white/5 text-foreground' : 'text-muted-foreground hover:bg-black/5 dark:hover:bg-white/5'}`}
             >
               <div className="flex items-center gap-3">
-                 <div className={`w-1.5 h-1.5 rounded-full ${filter === 'day_off' && isHabits ? 'bg-[#e89454]' : 'bg-muted-foreground/40'}`} />
+                 <div className={`w-1.5 h-1.5 rounded-full ${filter === 'day_off' && isHabits ? 'bg-primary' : 'bg-muted-foreground/40'}`} />
                  Day Off Routine
               </div>
               <span className="bg-black/5 dark:bg-white/10 text-muted-foreground text-xs font-bold px-2 py-0.5 rounded-md">{dayOffCount}</span>
@@ -154,7 +154,7 @@ const Sidebar = ({ user, logout, filter, setFilter, habits = [], anchors = [] })
               className={`w-full flex items-center justify-between px-4 py-2.5 rounded-xl text-sm font-semibold transition-colors ${filter === 'custom' && isHabits ? 'bg-black/5 dark:bg-white/5 text-foreground' : 'text-muted-foreground hover:bg-black/5 dark:hover:bg-white/5'}`}
             >
               <div className="flex items-center gap-3">
-                 <div className={`w-1.5 h-1.5 rounded-full ${filter === 'custom' && isHabits ? 'bg-[#e89454]' : 'bg-muted-foreground/40'}`} />
+                 <div className={`w-1.5 h-1.5 rounded-full ${filter === 'custom' && isHabits ? 'bg-primary' : 'bg-muted-foreground/40'}`} />
                  Custom Routine
               </div>
               <span className="bg-black/5 dark:bg-white/10 text-muted-foreground text-xs font-bold px-2 py-0.5 rounded-md">{customCount}</span>
@@ -170,7 +170,7 @@ const Sidebar = ({ user, logout, filter, setFilter, habits = [], anchors = [] })
                 onClick={() => toggleTheme(false)}
                 className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-xl text-sm font-bold transition-all ${!isDark ? 'bg-surface text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
              >
-                <SunIcon />
+                <div className={!isDark ? "text-primary" : ""}><SunIcon /></div>
                 Warm
              </button>
              <button 
@@ -186,7 +186,7 @@ const Sidebar = ({ user, logout, filter, setFilter, habits = [], anchors = [] })
           <div className="flex items-center gap-3 group relative cursor-pointer" onClick={logout}>
             <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-lg shrink-0 overflow-hidden">
                {user?.name ? (
-                  <div className="w-full h-full bg-[#f2a154] flex items-center justify-center text-white text-lg">
+                  <div className="w-full h-full bg-primary flex items-center justify-center text-white text-lg">
                     {user.name.charAt(0).toUpperCase()}
                   </div>
                ) : (

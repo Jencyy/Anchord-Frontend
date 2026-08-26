@@ -222,7 +222,7 @@ const AnalyticsView = () => {
         
         {/* Header */}
         <div>
-          <p className="text-[11px] font-extrabold text-[#e89454] tracking-widest uppercase mb-2">PERFORMANCE OVERVIEW</p>
+          <p className="text-[11px] font-extrabold text-primary tracking-widest uppercase mb-2">PERFORMANCE OVERVIEW</p>
           <h1 className="text-4xl font-extrabold text-foreground tracking-tight mb-2">Your Habits Identity</h1>
           <p className="text-[14px] text-muted-foreground font-medium">Track your identity streaks. Disrupted days are excluded from consistency rates.</p>
         </div>
@@ -231,9 +231,9 @@ const AnalyticsView = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-4">
           {identityStats.map((stat, idx) => {
             const colors = [
-              'text-[#e89454]', // Orange
+              'text-primary', // Orange
               'text-[#14B8A6]', // Cyan
-              'text-[#e89454]'  // Orange
+              'text-primary'  // Orange
             ];
             const colorClass = colors[idx % colors.length];
 
@@ -263,7 +263,7 @@ const AnalyticsView = () => {
             
             <div className="flex items-center gap-4 text-xs font-bold text-muted-foreground">
               <div className="flex items-center gap-1.5"><div className="w-3 h-3 rounded bg-[#14B8A6]"></div> Completed</div>
-              <div className="flex items-center gap-1.5"><div className="w-3 h-3 rounded border border-[#e89454]"></div> Disrupted</div>
+              <div className="flex items-center gap-1.5"><div className="w-3 h-3 rounded border border-primary"></div> Disrupted</div>
               <div className="flex items-center gap-1.5"><div className="w-3 h-3 rounded bg-black/10 dark:bg-white/5"></div> Missed</div>
             </div>
           </div>
@@ -274,7 +274,7 @@ const AnalyticsView = () => {
               if (dayObj.status === 'completed') {
                 classNames += "bg-[#14B8A6] text-black shadow-sm";
               } else if (dayObj.status === 'disrupted') {
-                classNames += "border border-[#e89454] text-[#e89454] bg-[#e89454]/5";
+                classNames += "border border-primary text-primary bg-primary/5";
               } else if (dayObj.status === 'missed') {
                 classNames += "bg-black/5 dark:bg-white/5 text-muted-foreground opacity-50";
               } else {
@@ -296,7 +296,7 @@ const AnalyticsView = () => {
           <div className="bg-surface border border-border rounded-2xl p-8 shadow-sm flex flex-col justify-between h-48">
              <span className="text-sm font-bold text-muted-foreground">Current Streak</span>
              <div className="flex items-baseline gap-3">
-                <span className="text-5xl font-extrabold text-[#e89454]">{streakData.current} Days</span>
+                <span className="text-5xl font-extrabold text-primary">{streakData.current} Days</span>
                 <span className="text-sm font-bold text-muted-foreground">Best: {streakData.best} days</span>
              </div>
           </div>
@@ -307,7 +307,7 @@ const AnalyticsView = () => {
                {sparklineData.map((heightPercent, idx) => (
                  <div key={idx} className="w-full bg-black/5 dark:bg-white/5 rounded-t-sm relative group overflow-hidden" style={{ height: '100%' }}>
                    <div 
-                     className="absolute bottom-0 w-full bg-[#e89454] rounded-t-sm transition-all duration-700 ease-out"
+                     className="absolute bottom-0 w-full bg-primary rounded-t-sm transition-all duration-700 ease-out"
                      style={{ height: `${Math.max(heightPercent, 10)}%` }} // Min 10% for visual presence if > 0, actually let's just use what's calculated
                    />
                  </div>

@@ -140,7 +140,7 @@ const Onboarding = () => {
       {/* ── Header ── */}
       <div className="max-w-xl w-full text-center mb-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
         <div className="flex justify-center mb-6">
-          <img src="/Anchord-logo.png" alt="Anchord Logo" className="h-16 object-contain" />
+          <div className="flex justify-center items-center gap-3"><div className="bg-primary rounded-2xl w-14 h-14 flex items-center justify-center shadow-sm"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg></div><span className="text-4xl font-extrabold tracking-tight text-foreground">Anchord</span></div>
         </div>
         <div className="inline-flex items-center gap-2 bg-surface border border-border text-primary text-xs font-bold px-4 py-1.5 rounded-full mb-5 shadow-sm">
           <div className="h-2 w-2 rounded-full bg-secondary animate-pulse" />
